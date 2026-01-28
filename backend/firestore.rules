@@ -1,0 +1,146 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function getUserRole() {
+      return request.auth.token.role;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && getUserRole() in ['admin', 'management'];
+    }
+    
+    function isTeacher() {
+      return isAuthenticated() && getUserRole() == 'teacher';
+    }
+    
+    function isStudent() {
+      return isAuthenticated() && getUserRole() == 'student';
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isOwnerByEmail(email) {
+      return isAuthenticated() && request.auth.token.email == email;
+    }
+    
+    // Users collection - self-read, admin-write
+    match /users/{userId} {
+      allow read: if isAuthenticated() && 
+        (isOwnerByEmail(resource.data.email) || isAdmin());
+      allow write: if isAdmin();
+      allow update: if isAuthenticated() && isOwnerByEmail(resource.data.email) &&
+        // Students can only update specific fields
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['lastLogin', 'profileComplete', 'updatedAt']);
+    }
+    
+    // Profiles collection
+    match /profiles/{profileId} {
+      allow read: if isAuthenticated() &&
+        (resource.data.userId == request.auth.token.email ||
+         isAdmin() || isTeacher());
+      allow create: if isAuthenticated() &&
+        (request.resource.data.userId == request.auth.token.email || isAdmin());
+      allow update: if isAuthenticated() &&
+        (resource.data.userId == request.auth.token.email || isAdmin());
+      allow delete: if isAdmin();
+    }
+    
+    // Hostel collection
+    match /hostel/{hostelId} {
+      allow read: if isAuthenticated() &&
+        (resource.data.studentEmail == request.auth.token.email || isAdmin());
+      allow write: if isAdmin();
+    }
+    
+    // Requests collection (outing, leave, etc.)
+    match /requests/{requestId} {
+      allow read: if isAuthenticated() &&
+        (resource.data.studentInfo.studentEmail == request.auth.token.email ||
+         isAdmin());
+      allow create: if isAuthenticated() && isStudent() &&
+        request.resource.data.studentInfo.studentEmail == request.auth.token.email;
+      allow update: if isAdmin() || 
+        (isStudent() && resource.data.status == 'pending' &&
+         resource.data.studentInfo.studentEmail == request.auth.token.email);
+      allow delete: if isAdmin();
+    }
+    
+    // Documents collection
+    match /documents/{documentId} {
+      allow read: if isAuthenticated() &&
+        getUserRole() in resource.data.visibility.roles &&
+        resource.data.isActive == true;
+      allow write: if isAdmin();
+    }
+    
+    // Hostel Issues collection
+    match /hostel_issues/{issueId} {
+      allow read: if isAuthenticated() &&
+        (resource.data.reportedBy.email == request.auth.token.email || isAdmin());
+      allow create: if isAuthenticated() && isStudent();
+      allow update: if isAdmin() ||
+        (isStudent() && resource.data.reportedBy.email == request.auth.token.email &&
+         resource.data.status == 'reported');
+      allow delete: if isAdmin();
+    }
+    
+    // Feedback Links collection
+    match /feedback_links/{feedbackId} {
+      allow read: if isAuthenticated() &&
+        getUserRole() in resource.data.targetAudience.roles &&
+        resource.data.isActive == true;
+      allow write: if isAdmin();
+    }
+    
+    // Notifications collection (existing - preserve functionality)
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated() &&
+        (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isAdmin();
+      allow update: if isAuthenticated() &&
+        (resource.data.userId == request.auth.uid || isAdmin());
+      allow delete: if isAdmin();
+    }
+    
+    // Attendance collection - read own data, admin full access
+    match /attendance/{attendanceId} {
+      allow read: if isAuthenticated() &&
+        (resource.data.userId == request.auth.uid ||
+         resource.data.employeeId == request.auth.token.employeeId ||
+         resource.data.studentId == request.auth.token.studentId ||
+         isAdmin() || isTeacher());
+      allow create: if isAdmin() || 
+        // Allow device access with special token
+        (isAuthenticated() && request.auth.token.device_access == true);
+      allow update, delete: if isAdmin();
+    }
+    
+    // Attendance summary - read own, admin full access
+    match /attendance_summary/{summaryId} {
+      allow read: if isAuthenticated() &&
+        (resource.data.userId == request.auth.uid ||
+         isAdmin() || isTeacher());
+      allow write: if isAdmin();
+    }
+    
+    // Biometric devices - admin only
+    match /biometric_devices/{deviceId} {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+      // Allow devices to send heartbeat with special token
+      allow update: if isAuthenticated() && 
+        request.auth.token.device_access == true &&
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['status', 'statistics', 'updatedAt']);
+    }
+  }
+}
