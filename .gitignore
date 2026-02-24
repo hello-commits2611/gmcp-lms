@@ -20,6 +20,12 @@ firebase-service-account.json
 backend/data/
 *.json.backup.*
 
+# User Uploads (NEVER commit user files!)
+backend/uploads/*
+!backend/uploads/README.md
+!backend/uploads/.gitkeep
+uploads/
+
 # Logs
 logs/
 *.log
