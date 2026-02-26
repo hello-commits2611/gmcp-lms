@@ -142,10 +142,12 @@ app.use('*', (req, res) => {
 });
 
 
-// Start server
-app.listen(PORT, () => {
+// Start server - bind to 0.0.0.0 for Render deployment
+const HOST = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
+app.listen(PORT, HOST, () => {
   console.log(`🚀 GMCP LMS Unified Portal running on port ${PORT}`);
   console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`🌐 Host: ${HOST}`);
   console.log(`🌐 Single Portal: http://localhost:${PORT}`);
   console.log(`📋 Setup Page: http://localhost:${PORT}/setup.html`);
   console.log(`🧪 Integration Test: http://localhost:${PORT}/test-integration.html`);
