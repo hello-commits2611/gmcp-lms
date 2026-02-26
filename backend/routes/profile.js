@@ -357,112 +357,11 @@ router.post('/', validateSession, upload.single('profilePicture'), (req, res) =>
       saveUsers(users);
     }
     
-    // AUTO-ENROLL STUDENT INTO ATTENDANCE SYSTEM
-    // Only auto-enroll if this is a student and they're completing profile for the first time
+    // AUTO-ENROLL STUDENT INTO ATTENDANCE SYSTEM - DISABLED (Migrated to Firestore)
+    // Legacy JSON-based enrollment code has been removed
+    // Enrollment is now handled through Firestore attendance system
     if (req.user.role === 'student' && !existingProfile) {
-      try {
-        console.log('🎓 Auto-enrolling student into attendance system...');
-        
-        // Map course to branch code
-        const courseToBranchMap = {
-          'Diploma in Civil Engineering': 'CE',
-          'Diploma in Mechanical Engineering': 'ME',
-          'Diploma in Electrical Engineering': 'EE',
-          'Diploma in Computer Science Engineering': 'CSE'
-        };
-        
-        const branchId = courseToBranchMap[course];
-        
-        if (!branchId) {
-          console.warn(`⚠️ Unknown course: ${course}, cannot auto-enroll`);
-        } else {
-          // Skip auto-enrollment - system migrated to Firestore
-          // Enrollment should be done through Firestore attendance system
-          console.log('ℹ️ Attendance enrollment via Firestore - skipping legacy JSON enrollment');
-          /*
-          // Legacy JSON enrollment code (disabled - system uses Firestore now)
-          const ENROLLMENTS_FILE = path.join(__dirname, '../data/attendance-enrollments.json');
-          let enrollments = {};
-          
-          if (fs.existsSync(ENROLLMENTS_FILE)) {
-            try {
-              const enrollData = fs.readFileSync(ENROLLMENTS_FILE, 'utf8');
-              enrollments = JSON.parse(enrollData) || {};
-            } catch (e) {
-              console.error('Error reading enrollments:', e);
-              enrollments = {};
-            }
-          }
-          */
-        }
-        
-        // Skip the rest of auto-enrollment
-        if (false) {
-          
-          // Create enrollment ID
-          const enrollmentId = `${req.user.email}_${session}_${branchId}_${currentSemester}`;
-          
-          // Check if enrollment already exists
-          if (!enrollments[enrollmentId]) {
-            enrollments[enrollmentId] = {
-              id: enrollmentId,
-              studentEmail: req.user.email,
-              studentId: studentId.trim(),
-              studentName: studentName.trim(),
-              sessionId: session.trim(),
-              branchId: branchId,
-              semester: parseInt(currentSemester),
-              status: 'active',
-              createdAt: new Date().toISOString(),
-              createdBy: 'system-auto-enrollment'
-            };
-            
-            // Save enrollment
-            fs.writeFileSync(ENROLLMENTS_FILE, JSON.stringify(enrollments, null, 2));
-            
-            console.log(`✅ Auto-enrolled: ${studentName} (${studentId}) -> ${session}/${branchId}/Sem-${currentSemester}`);
-            
-            // Add audit log
-            const AUDIT_FILE = path.join(__dirname, '../data/attendance-audit-logs.json');
-            let auditLogs = [];
-            if (fs.existsSync(AUDIT_FILE)) {
-              try {
-                const auditData = fs.readFileSync(AUDIT_FILE, 'utf8');
-                auditLogs = JSON.parse(auditData) || [];
-              } catch (e) {
-                auditLogs = [];
-              }
-            }
-            
-            auditLogs.push({
-              id: Date.now().toString(),
-              action: 'AUTO_ENROLL_STUDENT',
-              details: {
-                studentEmail: req.user.email,
-                studentId: studentId.trim(),
-                studentName: studentName.trim(),
-                sessionId: session.trim(),
-                branchId: branchId,
-                semester: parseInt(currentSemester)
-              },
-              userEmail: 'system',
-              timestamp: new Date().toISOString()
-            });
-            
-            if (auditLogs.length > 1000) {
-              auditLogs.splice(0, auditLogs.length - 1000);
-            }
-            
-            fs.writeFileSync(AUDIT_FILE, JSON.stringify(auditLogs, null, 2));
-          } else {
-            console.log('ℹ️ Enrollment already exists, skipping auto-enrollment');
-          }
-        }
-        */
-      } catch (enrollError) {
-        console.error('❌ Error during auto-enrollment (expected with Firestore migration):', enrollError.message);
-        // Don't fail profile submission if auto-enrollment fails
-      }
+      console.log('ℹ️ Student profile created - Attendance enrollment via Firestore');
     }
     
     res.json({ 
