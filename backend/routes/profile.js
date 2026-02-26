@@ -457,8 +457,8 @@ router.post('/', validateSession, upload.single('profilePicture'), (req, res) =>
           } else {
             console.log('ℹ️ Enrollment already exists, skipping auto-enrollment');
           }
-          */
         }
+        */
       } catch (enrollError) {
         console.error('❌ Error during auto-enrollment (expected with Firestore migration):', enrollError.message);
         // Don't fail profile submission if auto-enrollment fails
