@@ -53,6 +53,13 @@
         .toggle-switch.active { background: #00b894; }
         .toggle-slider { position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: white; border-radius: 50%; transition: transform 0.3s ease; }
         .toggle-switch.active .toggle-slider { transform: translateX(26px); }
+        .biometric-tab { display: none; }
+        .biometric-tab.active { display: block; }
+        .table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; }
+        .table thead { background: #f8f9fa; }
+        .table th { padding: 12px; text-align: left; font-weight: 600; color: #333; border-bottom: 2px solid #dee2e6; }
+        .table td { padding: 12px; border-bottom: 1px solid #f0f0f0; }
+        .table tbody tr:hover { background: #f8f9fa; }
     </style>
 </head>
 <body>
@@ -85,6 +92,7 @@
             <div class="nav-item" onclick="showSection('document-management')">📄 Document Management</div>
             <div class="nav-item" onclick="showSection('feedback-management')">💬 Feedback Management</div>
             <div class="nav-item" onclick="showSection('attendance')">📊 Attendance Management</div>
+            <div class="nav-item" onclick="showSection('biometric-attendance')">👆 Biometric Attendance</div>
             <div class="nav-item" onclick="showSection('system')">⚙️ System Settings</div>
             <div class="nav-item" onclick="showSection('logs')">📋 System Logs</div>
             <div class="nav-item" onclick="showSection('backup')">💾 Backup & Security</div>
@@ -1074,6 +1082,137 @@
                             <div class="text-center" style="padding: 20px; color: #666;">Loading audit logs...</div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BIOMETRIC ATTENDANCE SECTION -->
+        <section id="biometric-attendance" class="page-section">
+            <h2 class="mb-4">👆 Biometric Attendance System</h2>
+            
+            <!-- Stats Cards -->
+            <div class="stats-grid" style="margin-bottom: 30px;">
+                <div class="stat-card">
+                    <div class="stat-value" id="bioEnrolledUsers">0</div>
+                    <div class="stat-label">Enrolled Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="bioTodayAttendance">0</div>
+                    <div class="stat-label">Today's Attendance</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="bioActiveDevices">0</div>
+                    <div class="stat-label">Active Devices</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="bioPendingEnrollments">0</div>
+                    <div class="stat-label">Pending Enrollments</div>
+                </div>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="filter-tabs" style="margin-bottom: 20px;">
+                <div class="filter-tab active" onclick="showBiometricTab('devices')">📱 Devices</div>
+                <div class="filter-tab" onclick="showBiometricTab('enrollment')">✋ Enrollment Status</div>
+                <div class="filter-tab" onclick="showBiometricTab('attendance-log')">📊 Attendance Log</div>
+                <div class="filter-tab" onclick="showBiometricTab('reports')">📈 Reports</div>
+            </div>
+
+            <!-- Devices Tab -->
+            <div id="biometric-devices" class="biometric-tab active">
+                <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <h3>Biometric Devices</h3>
+                    <button class="btn btn-primary" onclick="loadBiometricDevices()">🔄 Refresh</button>
+                </div>
+                
+                <div id="devicesList">
+                    <div class="text-center" style="padding: 40px; color: #666;">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <div style="margin-top: 15px;">Click Refresh to load devices...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enrollment Tab -->
+            <div id="biometric-enrollment" class="biometric-tab" style="display: none;">
+                <div class="search-bar">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="form-control" placeholder="Search users..." id="bioEnrollmentSearch">
+                </div>
+                
+                <div class="filter-tabs" style="margin-bottom: 20px;">
+                    <div class="filter-tab active" onclick="filterBioEnrollment('all')">All</div>
+                    <div class="filter-tab" onclick="filterBioEnrollment('active')">✅ Enrolled</div>
+                    <div class="filter-tab" onclick="filterBioEnrollment('pending')">⏳ Pending</div>
+                    <div class="filter-tab" onclick="filterBioEnrollment('not-enrolled')">❌ Not Enrolled</div>
+                </div>
+                
+                <div id="bioEnrollmentList">
+                    <div class="text-center" style="padding: 40px; color: #666;">
+                        <button class="btn btn-primary" onclick="loadBioEnrollmentStatus()">Load Enrollment Status</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attendance Log Tab -->
+            <div id="biometric-attendance-log" class="biometric-tab" style="display: none;">
+                <div style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+                    <input type="date" class="form-control" style="max-width: 200px;" id="bioAttendanceDate">
+                    <button class="btn btn-primary" onclick="loadBioAttendanceLog()">🔍 Search</button>
+                    <button class="btn btn-success" onclick="exportBioAttendance()">📥 Export</button>
+                </div>
+                
+                <div id="bioAttendanceLogList">
+                    <div class="text-center" style="padding: 40px; color: #666;">
+                        Select a date and click Search to view attendance records
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Tab -->
+            <div id="biometric-reports" class="biometric-tab" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">📈 Biometric Attendance Reports</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-grid">
+                            <div>
+                                <label>Report Type</label>
+                                <select class="form-control" id="bioReportType">
+                                    <option value="daily">Daily Report</option>
+                                    <option value="weekly">Weekly Report</option>
+                                    <option value="monthly">Monthly Report</option>
+                                    <option value="custom">Custom Range</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>User Filter</label>
+                                <select class="form-control" id="bioReportUserFilter">
+                                    <option value="all">All Users</option>
+                                    <option value="students">Students Only</option>
+                                    <option value="faculty">Faculty Only</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>From Date</label>
+                                <input type="date" class="form-control" id="bioReportFromDate">
+                            </div>
+                            <div>
+                                <label>To Date</label>
+                                <input type="date" class="form-control" id="bioReportToDate">
+                            </div>
+                        </div>
+                        <div style="margin-top: 20px; display: flex; gap: 10px;">
+                            <button class="btn btn-primary" onclick="generateBioReport()">📊 Generate Report</button>
+                            <button class="btn btn-success" onclick="alert('Download PDF feature coming soon!')">📥 Download PDF</button>
+                            <button class="btn btn-light" onclick="alert('Download CSV feature coming soon!')">📄 Download CSV</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="bioReportResults" style="margin-top: 20px;">
+                    <!-- Report results will be shown here -->
                 </div>
             </div>
         </section>
@@ -5855,6 +5994,201 @@
             
             select.innerHTML = (hasAll ? '<option value="">All Branches</option>' : '<option value="">Select Branch</option>') +
                 attendanceBranches.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
+        }
+
+        // ==================== BIOMETRIC ATTENDANCE FUNCTIONS ====================
+        
+        function showBiometricTab(tabName) {
+            document.querySelectorAll('.biometric-tab').forEach(tab => tab.style.display = 'none');
+            document.querySelectorAll('#biometric-attendance .filter-tab').forEach(tab => tab.classList.remove('active'));
+            
+            const tabMap = {
+                'devices': 'biometric-devices',
+                'enrollment': 'biometric-enrollment',
+                'attendance-log': 'biometric-attendance-log',
+                'reports': 'biometric-reports'
+            };
+            
+            document.getElementById(tabMap[tabName]).style.display = 'block';
+            event.target.classList.add('active');
+            
+            if (tabName === 'attendance-log') {
+                document.getElementById('bioAttendanceDate').valueAsDate = new Date();
+            }
+        }
+
+        async function loadBiometricDevices() {
+            const devicesList = document.getElementById('devicesList');
+            try {
+                devicesList.innerHTML = '<div class="text-center" style="padding: 40px;"><div class="spinner-border"></div><div style="margin-top: 15px;">Loading devices...</div></div>';
+                
+                const response = await fetch('/api/biometric/devices', { credentials: 'include' });
+                const result = await response.json();
+                
+                if (result.success && result.devices && result.devices.length > 0) {
+                    document.getElementById('bioActiveDevices').textContent = result.devices.filter(d => d.status?.isOnline).length;
+                    devicesList.innerHTML = result.devices.map(device => `
+                        <div class="card" style="margin-bottom: 15px;">
+                            <div class="card-body">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="flex: 1;">
+                                        <h4 style="margin: 0 0 5px 0;">${device.name || device.deviceId}</h4>
+                                        <div style="color: #666; font-size: 13px;">
+                                            📱 ${device.deviceId} • 📍 ${device.location?.name || 'Unknown'} • 
+                                            <span class="${device.status?.isOnline ? 'text-success' : 'text-danger'}">
+                                                ${device.status?.isOnline ? '🟢 Online' : '🔴 Offline'}
+                                            </span>
+                                        </div>
+                                        ${device.status?.lastSyncTime ? `<div style="color: #999; font-size: 12px; margin-top: 3px;">Last sync: ${new Date(device.status.lastSyncTime).toLocaleString()}</div>` : ''}
+                                    </div>
+                                    <div style="display: flex; gap: 8px;">
+                                        <button class="btn btn-sm btn-success" onclick="alert('Sync device: ${device.deviceId}')">🔄 Sync</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    devicesList.innerHTML = '<div class="text-center" style="padding: 40px;">No devices found. Contact your biometric system administrator.</div>';
+                }
+            } catch (error) {
+                console.error('Error loading devices:', error);
+                devicesList.innerHTML = '<div class="text-center" style="padding: 40px; color: #e74c3c;">Error loading devices. Please try again.</div>';
+            }
+        }
+
+        async function loadBioEnrollmentStatus() {
+            const list = document.getElementById('bioEnrollmentList');
+            try {
+                list.innerHTML = '<div class="text-center" style="padding: 40px;"><div class="spinner-border"></div></div>';
+                
+                const response = await fetch('/api/users', { credentials: 'include' });
+                const result = await response.json();
+                const users = result.success ? result.users : result;
+                
+                const enrolled = users.filter(u => u.biometricData?.enrollmentStatus === 'active').length;
+                const pending = users.filter(u => u.biometricData?.enrollmentStatus === 'pending').length;
+                
+                document.getElementById('bioEnrolledUsers').textContent = enrolled;
+                document.getElementById('bioPendingEnrollments').textContent = pending;
+                
+                list.innerHTML = users.map(user => {
+                    const status = user.biometricData?.enrollmentStatus || 'not-enrolled';
+                    const statusBadge = status === 'active' ? '<span class="badge badge-success">✅ Enrolled</span>' :
+                                       status === 'pending' ? '<span class="badge badge-warning">⏳ Pending</span>' :
+                                       '<span class="badge badge-secondary">❌ Not Enrolled</span>';
+                    
+                    return `
+                        <div class="user-item" data-enrollment-status="${status}">
+                            <div class="user-avatar">${user.name.charAt(0)}</div>
+                            <div class="user-info">
+                                <div class="user-name">${user.name}</div>
+                                <div class="user-email">${user.studentId || user.employeeId || user.email} • ${user.role}</div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                ${statusBadge}
+                                ${user.biometricId ? `<span class="badge badge-info">👆 ID: ${user.biometricId}</span>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading enrollment:', error);
+                list.innerHTML = '<div class="text-center" style="padding: 40px; color: #e74c3c;">Error loading enrollment data</div>';
+            }
+        }
+
+        function filterBioEnrollment(status) {
+            document.querySelectorAll('#bioEnrollmentList .user-item').forEach(item => {
+                const itemStatus = item.dataset.enrollmentStatus;
+                item.style.display = (status === 'all' || itemStatus === status) ? 'flex' : 'none';
+            });
+            document.querySelectorAll('#biometric-enrollment .filter-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        async function loadBioAttendanceLog() {
+            const date = document.getElementById('bioAttendanceDate').value;
+            const logList = document.getElementById('bioAttendanceLogList');
+            
+            if (!date) {
+                alert('Please select a date');
+                return;
+            }
+            
+            try {
+                logList.innerHTML = '<div class="text-center" style="padding: 40px;"><div class="spinner-border"></div></div>';
+                
+                const response = await fetch(`/api/biometric/attendance?date=${date}`, { credentials: 'include' });
+                const result = await response.json();
+                
+                if (result.success && result.attendance && result.attendance.length > 0) {
+                    document.getElementById('bioTodayAttendance').textContent = result.attendance.length;
+                    
+                    logList.innerHTML = `
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>User</th>
+                                    <th>ID</th>
+                                    <th>Device</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${result.attendance.map(record => `
+                                    <tr>
+                                        <td>${new Date(record.timestamp).toLocaleTimeString()}</td>
+                                        <td>${record.userName || 'Unknown'}</td>
+                                        <td>${record.biometricId}</td>
+                                        <td>${record.deviceId}</td>
+                                        <td><span class="badge ${record.punchType === 'in' ? 'badge-success' : 'badge-warning'}">${record.punchType === 'in' ? '👋 In' : '👋 Out'}</span></td>
+                                        <td><span class="badge badge-success">✅ Verified</span></td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                } else {
+                    logList.innerHTML = '<div class="text-center" style="padding: 40px;">No attendance records found for this date</div>';
+                }
+            } catch (error) {
+                console.error('Error loading attendance:', error);
+                logList.innerHTML = '<div class="text-center" style="padding: 40px; color: #e74c3c;">Error loading attendance data</div>';
+            }
+        }
+
+        function exportBioAttendance() {
+            const date = document.getElementById('bioAttendanceDate').value;
+            if (!date) {
+                alert('Please select a date first');
+                return;
+            }
+            alert(`Export attendance for ${date}\nCSV download feature coming soon!`);
+        }
+
+        function generateBioReport() {
+            const reportType = document.getElementById('bioReportType').value;
+            const userFilter = document.getElementById('bioReportUserFilter').value;
+            const fromDate = document.getElementById('bioReportFromDate').value;
+            const toDate = document.getElementById('bioReportToDate').value;
+            
+            if (reportType === 'custom' && (!fromDate || !toDate)) {
+                alert('Please select both From and To dates for custom report');
+                return;
+            }
+            
+            document.getElementById('bioReportResults').innerHTML = `
+                <div class="card">
+                    <div class="card-header"><div class="card-title">Report: ${reportType}</div></div>
+                    <div class="card-body">
+                        <p>Generating ${reportType} report for ${userFilter} users...</p>
+                        <p>This feature is under development. Please check back soon!</p>
+                    </div>
+                </div>
+            `;
         }
     </script>
 
