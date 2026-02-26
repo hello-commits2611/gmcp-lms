@@ -117,7 +117,9 @@ app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'healthy', 
     timestamp: new Date().toISOString(),
-    service: 'GMCP LMS Unified Portal'
+    service: 'GMCP LMS Unified Portal',
+    version: '1.1.0-biometric',
+    features: ['biometric-attendance', 'x2008-device']
   });
 });
 
@@ -148,6 +150,9 @@ app.listen(PORT, () => {
   console.log(`📋 Setup Page: http://localhost:${PORT}/setup.html`);
   console.log(`🧪 Integration Test: http://localhost:${PORT}/test-integration.html`);
   console.log(`\n⚡ All login routes now redirect to main portal for simplicity`);
+  console.log(`\n👆 Biometric Attendance: ENABLED`);
+  console.log(`   X2008 Device Support: Active`);
+  console.log(`   Admin Portal: http://localhost:${PORT}/admin-portal.html`);
 });
 
 module.exports = app;
