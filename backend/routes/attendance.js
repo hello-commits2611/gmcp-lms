@@ -23,6 +23,10 @@ async function readJSON(filePath) {
         const data = await fs.readFile(filePath, 'utf8');
         return JSON.parse(data);
     } catch (error) {
+        // Silently return empty data if file doesn't exist (Firestore migration)
+        if (error.code === 'ENOENT') {
+            return filePath.endsWith('.json') && !filePath.includes('audit') ? {} : [];
+        }
         console.error(`Error reading ${filePath}:`, error);
         return filePath.endsWith('.json') && !filePath.includes('audit') ? {} : [];
     }

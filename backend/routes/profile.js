@@ -376,7 +376,11 @@ router.post('/', validateSession, upload.single('profilePicture'), (req, res) =>
         if (!branchId) {
           console.warn(`⚠️ Unknown course: ${course}, cannot auto-enroll`);
         } else {
-          // Read enrollment file
+          // Skip auto-enrollment - system migrated to Firestore
+          // Enrollment should be done through Firestore attendance system
+          console.log('ℹ️ Attendance enrollment via Firestore - skipping legacy JSON enrollment');
+          /*
+          // Legacy JSON enrollment code (disabled - system uses Firestore now)
           const ENROLLMENTS_FILE = path.join(__dirname, '../data/attendance-enrollments.json');
           let enrollments = {};
           
@@ -389,6 +393,11 @@ router.post('/', validateSession, upload.single('profilePicture'), (req, res) =>
               enrollments = {};
             }
           }
+          */
+        }
+        
+        // Skip the rest of auto-enrollment
+        if (false) {
           
           // Create enrollment ID
           const enrollmentId = `${req.user.email}_${session}_${branchId}_${currentSemester}`;
@@ -448,9 +457,10 @@ router.post('/', validateSession, upload.single('profilePicture'), (req, res) =>
           } else {
             console.log('ℹ️ Enrollment already exists, skipping auto-enrollment');
           }
+          */
         }
       } catch (enrollError) {
-        console.error('❌ Error during auto-enrollment:', enrollError);
+        console.error('❌ Error during auto-enrollment (expected with Firestore migration):', enrollError.message);
         // Don't fail profile submission if auto-enrollment fails
       }
     }
