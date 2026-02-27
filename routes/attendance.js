@@ -100,6 +100,26 @@ router.post('/sessions', async (req, res) => {
     }
 });
 
+// Delete session
+router.delete('/sessions/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const sessions = await readJSON(SESSIONS_FILE);
+        
+        if (!sessions[id]) {
+            return res.status(404).json({ success: false, error: 'Session not found' });
+        }
+        
+        delete sessions[id];
+        await writeJSON(SESSIONS_FILE, sessions);
+        await addAuditLog('DELETE_SESSION', { sessionId: id }, req.body.deletedBy || 'admin');
+        
+        res.json({ success: true, message: 'Session deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 // Get all branches
 router.get('/branches', async (req, res) => {
     try {
@@ -134,6 +154,26 @@ router.post('/branches', async (req, res) => {
         await addAuditLog('CREATE_BRANCH', { branchId: id }, createdBy);
         
         res.json({ success: true, branch: branches[id] });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Delete branch
+router.delete('/branches/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const branches = await readJSON(BRANCHES_FILE);
+        
+        if (!branches[id]) {
+            return res.status(404).json({ success: false, error: 'Branch not found' });
+        }
+        
+        delete branches[id];
+        await writeJSON(BRANCHES_FILE, branches);
+        await addAuditLog('DELETE_BRANCH', { branchId: id }, req.body.deletedBy || 'admin');
+        
+        res.json({ success: true, message: 'Branch deleted successfully' });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }
@@ -174,6 +214,26 @@ router.post('/periods', async (req, res) => {
         await addAuditLog('CREATE_PERIOD', { periodId: id }, createdBy);
         
         res.json({ success: true, period: periods[id] });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Delete period
+router.delete('/periods/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const periods = await readJSON(PERIODS_FILE);
+        
+        if (!periods[id]) {
+            return res.status(404).json({ success: false, error: 'Period not found' });
+        }
+        
+        delete periods[id];
+        await writeJSON(PERIODS_FILE, periods);
+        await addAuditLog('DELETE_PERIOD', { periodId: id }, req.body.deletedBy || 'admin');
+        
+        res.json({ success: true, message: 'Period deleted successfully' });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }
