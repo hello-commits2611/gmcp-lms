@@ -1,0 +1,115 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return request.auth != null && 
+        request.auth.token.role in ['admin', 'management'];
+    }
+    
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+    
+    function isValidImageType() {
+      return request.resource.contentType.matches('image/.*');
+    }
+    
+    function isValidDocumentType() {
+      return request.resource.contentType.matches('application/pdf') ||
+             request.resource.contentType.matches('application/msword') ||
+             request.resource.contentType.matches('application/vnd.openxmlformats-officedocument.*') ||
+             request.resource.contentType.matches('image/.*');
+    }
+    
+    function isUnderSizeLimit(maxSizeMB) {
+      return request.resource.size < maxSizeMB * 1024 * 1024;
+    }
+    
+    // Profile pictures
+    match /profiles/{userId}/{fileName} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && 
+        (isOwner(userId) || isAdmin()) &&
+        isValidImageType() &&
+        isUnderSizeLimit(5); // 5MB limit
+    }
+    
+    // Documents (notices, circulars, etc.)
+    match /documents/{documentId}/{fileName} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin() &&
+        isValidDocumentType() &&
+        isUnderSizeLimit(10); // 10MB limit
+    }
+    
+    // Notice files
+    match /notices/{noticeId}/{fileName} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin() &&
+        isValidDocumentType() &&
+        isUnderSizeLimit(10); // 10MB limit
+    }
+    
+    // Mess menu files
+    match /mess-menu/{menuId}/{fileName} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin() &&
+        isValidDocumentType() &&
+        isUnderSizeLimit(5); // 5MB limit
+    }
+    
+    // Request supporting documents
+    match /requests/{requestId}/{fileName} {
+      allow read: if isAuthenticated() && 
+        (isAdmin() || request.auth.token.role == 'student');
+      allow write: if isAuthenticated() && 
+        request.auth.token.role == 'student' &&
+        isValidDocumentType() &&
+        isUnderSizeLimit(5); // 5MB limit
+      allow delete: if isAdmin();
+    }
+    
+    // Hostel issue attachments
+    match /hostel-issues/{issueId}/{fileName} {
+      allow read: if isAuthenticated() && 
+        (isAdmin() || request.auth.token.role == 'student');
+      allow write: if isAuthenticated() && 
+        request.auth.token.role == 'student' &&
+        isValidDocumentType() &&
+        isUnderSizeLimit(5); // 5MB limit
+      allow delete: if isAdmin();
+    }
+    
+    // Supporting documents (general)
+    match /supporting-documents/{documentId}/{fileName} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() &&
+        isValidDocumentType() &&
+        isUnderSizeLimit(10); // 10MB limit
+      allow delete: if isAdmin();
+    }
+    
+    // Attendance reports (if needed for export)
+    match /attendance-reports/{reportId}/{fileName} {
+      allow read: if isAuthenticated() && 
+        (isAdmin() || request.auth.token.role == 'teacher');
+      allow write: if isAdmin();
+    }
+    
+    // Biometric enrollment photos
+    match /biometric-enrollment/{userId}/{fileName} {
+      allow read: if isAuthenticated() && 
+        (isOwner(userId) || isAdmin());
+      allow write: if isAuthenticated() && 
+        (isOwner(userId) || isAdmin()) &&
+        isValidImageType() &&
+        isUnderSizeLimit(2); // 2MB limit
+    }
+  }
+}

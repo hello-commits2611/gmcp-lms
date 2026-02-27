@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Attendance Monitoring - GMCP Admin</title>
+    <link rel="icon" type="image/jpeg" href="images/logo.jpg">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom, #4CAF50 0%, #4CAF50 200px, #f5f7fa 200px, #f5f7fa 100%);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: transparent;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .header-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+        }
+
+        .header h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .header .subtitle {
+            font-size: 0.875rem;
+            opacity: 0.95;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Section Title */
+        .section-title {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 2rem;
+        }
+
+        /* Controls */
+        .controls {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #334155;
+            font-size: 0.875rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        /* Attendance Table */
+        .attendance-container {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .attendance-table {
+            width: 100%;
+            border-collapse: collapse;
+            overflow-x: auto;
+        }
+
+        .attendance-table th,
+        .attendance-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .attendance-table th {
+            background: #f8f9fa;
+            font-weight: 700;
+            color: #1a1a1a;
+            white-space: nowrap;
+        }
+
+        .date-header {
+            text-align: center;
+            font-weight: 600;
+            min-width: 100px;
+        }
+
+        .periods-cell {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .period-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            font-size: 0.875rem;
+        }
+
+        .period-present {
+            background: #4CAF50;
+        }
+
+        .period-absent {
+            background: #f44336;
+        }
+
+        .period-not-marked {
+            background: #9e9e9e;
+        }
+
+        .student-info {
+            font-weight: 500;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #64748b;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4CAF50;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Back Button */
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .period-circle {
+                width: 32px;
+                height: 32px;
+                font-size: 0.75rem;
+            }
+
+            .attendance-table {
+                font-size: 0.875rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='/admin-portal.html'">← Back to Admin Portal</button>
+
+    <div class="header">
+        <img src="images/logo.jpg" alt="GMCP Logo" class="header-logo">
+        <h1>GANGA MEMORIAL</h1>
+        <p class="subtitle">COLLEGE OF POLYTECHNIC, HARNAUT, NALANDA</p>
+        <p class="subtitle">(Ganga Memorial Educational and Development Society)</p>
+    </div>
+
+    <div class="container">
+        <h2 class="section-title">Last 7 Days Attendance</h2>
+
+        <!-- Controls -->
+        <div class="controls">
+            <div class="controls-grid">
+                <div class="form-group">
+                    <label>Session</label>
+                    <select id="sessionFilter" class="form-control">
+                        <option value="">Select Session</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Branch</label>
+                    <select id="branchFilter" class="form-control">
+                        <option value="">Select Branch</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Semester</label>
+                    <select id="semesterFilter" class="form-control">
+                        <option value="">Select Semester</option>
+                        <option value="1">Semester-1</option>
+                        <option value="2">Semester-2</option>
+                        <option value="3">Semester-3</option>
+                        <option value="4">Semester-4</option>
+                        <option value="5">Semester-5</option>
+                        <option value="6">Semester-6</option>
+                    </select>
+                </div>
+                <div class="form-group" style="display: flex; align-items: flex-end;">
+                    <button class="btn btn-primary" onclick="loadAttendanceReport()" style="width: 100%;">
+                        🔍 View Report
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Attendance Table -->
+        <div class="attendance-container">
+            <div class="table-header">
+                <h3 style="margin: 0;" id="reportTitle">Attendance Report</h3>
+            </div>
+            <div id="attendanceTableContainer">
+                <div class="empty-state">
+                    <p style="font-size: 3rem;">📊</p>
+                    <h3>Select filters to view attendance</h3>
+                    <p>Choose session, branch, and semester to load last 7 days attendance report</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load configuration on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSessions();
+            loadBranches();
+        });
+
+        async function loadSessions() {
+            try {
+                const res = await fetch('/api/attendance/sessions', { credentials: 'include' });
+                const data = await res.json();
+                if (data.success) {
+                    const select = document.getElementById('sessionFilter');
+                    select.innerHTML = '<option value="">Select Session</option>' +
+                        data.sessions.map(s => `<option value="${s.id}">${s.name || s.id}</option>`).join('');
+                }
+            } catch (error) {
+                console.error('Error loading sessions:', error);
+            }
+        }
+
+        async function loadBranches() {
+            try {
+                const res = await fetch('/api/attendance/branches', { credentials: 'include' });
+                const data = await res.json();
+                if (data.success) {
+                    const select = document.getElementById('branchFilter');
+                    select.innerHTML = '<option value="">Select Branch</option>' +
+                        data.branches.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
+                }
+            } catch (error) {
+                console.error('Error loading branches:', error);
+            }
+        }
+
+        async function loadAttendanceReport() {
+            const session = document.getElementById('sessionFilter').value;
+            const branch = document.getElementById('branchFilter').value;
+            const semester = document.getElementById('semesterFilter').value;
+
+            if (!session || !branch || !semester) {
+                alert('Please select all filters');
+                return;
+            }
+
+            const container = document.getElementById('attendanceTableContainer');
+            container.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading attendance data...</p>
+                </div>
+            `;
+
+            try {
+                // Get last 7 days date range
+                const toDate = new Date().toISOString().split('T')[0];
+                const fromDate = new Date();
+                fromDate.setDate(fromDate.getDate() - 7);
+                const fromDateStr = fromDate.toISOString().split('T')[0];
+
+                // Fetch attendance records
+                const res = await fetch(
+                    `/api/attendance/records?sessionId=${session}&branchId=${branch}&semester=${semester}&date>=${fromDateStr}`,
+                    { credentials: 'include' }
+                );
+                const data = await res.json();
+
+                if (!data.success) {
+                    throw new Error(data.error || 'Failed to load attendance');
+                }
+
+                // Fetch student list
+                const studentsRes = await fetch(
+                    `/api/attendance/student-list?sessionId=${session}&branchId=${branch}&semester=${semester}`,
+                    { credentials: 'include' }
+                );
+                const studentsData = await studentsRes.json();
+
+                if (!studentsData.success) {
+                    throw new Error('Failed to load student list');
+                }
+
+                displayAttendanceReport(data.records, studentsData.students, fromDateStr, toDate);
+
+            } catch (error) {
+                console.error('Error loading attendance report:', error);
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p style="font-size: 3rem;">⚠️</p>
+                        <h3>Error Loading Data</h3>
+                        <p>${error.message}</p>
+                        <button class="btn btn-primary" onclick="loadAttendanceReport()">🔄 Retry</button>
+                    </div>
+                `;
+            }
+        }
+
+        function displayAttendanceReport(records, students, fromDate, toDate) {
+            const container = document.getElementById('attendanceTableContainer');
+            const branchName = document.getElementById('branchFilter').selectedOptions[0].text;
+
+            // Update title
+            document.getElementById('reportTitle').textContent = `${branchName} - Last 7 Days Attendance`;
+
+            if (students.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p style="font-size: 3rem;">📭</p>
+                        <h3>No Students Found</h3>
+                        <p>No students are enrolled in this class</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Get unique dates from last 7 days
+            const dates = [];
+            for (let d = new Date(fromDate); d <= new Date(toDate); d.setDate(d.getDate() + 1)) {
+                if (d.getDay() !== 0) { // Skip Sundays
+                    dates.push(d.toISOString().split('T')[0]);
+                }
+            }
+
+            // Build student attendance map
+            const studentAttendanceMap = {};
+            students.forEach(student => {
+                studentAttendanceMap[student.studentEmail] = {
+                    studentId: student.studentId,
+                    studentName: student.studentName,
+                    dates: {}
+                };
+            });
+
+            // Fill attendance data
+            records.forEach(record => {
+                if (record.classNotConducted) return;
+
+                record.attendance.forEach(att => {
+                    if (studentAttendanceMap[att.studentEmail]) {
+                        if (!studentAttendanceMap[att.studentEmail].dates[record.date]) {
+                            studentAttendanceMap[att.studentEmail].dates[record.date] = [];
+                        }
+
+                        // Extract period number
+                        const periodMatch = record.periodId.match(/period-(\\d+)/);
+                        const periodNum = periodMatch ? parseInt(periodMatch[1]) : null;
+
+                        if (periodNum) {
+                            studentAttendanceMap[att.studentEmail].dates[record.date].push({
+                                period: periodNum,
+                                status: att.status
+                            });
+                        }
+                    }
+                });
+            });
+
+            // Generate table HTML
+            let html = `
+                <div style="overflow-x: auto;">
+                    <table class="attendance-table">
+                        <thead>
+                            <tr>
+                                <th>Student Info</th>
+                                ${dates.map(date => `<th class="date-header">${formatDate(date)}</th>`).join('')}
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            Object.values(studentAttendanceMap).forEach(student => {
+                html += `<tr>`;
+                html += `<td class="student-info">${student.studentId} - ${student.studentName}</td>`;
+
+                dates.forEach(date => {
+                    const dayRecords = student.dates[date] || [];
+                    
+                    html += `<td>`;
+                    if (dayRecords.length > 0) {
+                        html += `<div class="periods-cell">`;
+                        // Sort periods and display circles
+                        dayRecords.sort((a, b) => a.period - b.period).forEach(rec => {
+                            const statusClass = rec.status === 'present' ? 'period-present' : 'period-absent';
+                            html += `<div class="period-circle ${statusClass}">${rec.period}</div>`;
+                        });
+                        html += `</div>`;
+                    } else {
+                        html += `<div class="periods-cell"><div class="period-circle period-not-marked">-</div></div>`;
+                    }
+                    html += `</td>`;
+                });
+
+                html += `</tr>`;
+            });
+
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = String(date.getFullYear()).slice(-2);
+            return `${day}-${month}-${year}`;
+        }
+    </script>
+</body>
+</html>

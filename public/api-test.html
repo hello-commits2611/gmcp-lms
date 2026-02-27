@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test - GMCP LMS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            border: 1px solid #ddd;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #5a67d8;
+        }
+        .result {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        input, select {
+            width: 200px;
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>GMCP LMS API Test</h1>
+    
+    <div class="test-section">
+        <h3>1. Test User Login</h3>
+        <input type="email" id="loginEmail" placeholder="Email" value="uttchrist@gmcpnalanda.com">
+        <input type="password" id="loginPassword" placeholder="Password" value="UttChrist@2025">
+        <button onclick="testLogin()">Test Login</button>
+        <div id="loginResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>2. Create New User</h3>
+        <input type="text" id="userName" placeholder="Full Name" value="Test Student">
+        <input type="email" id="userEmail" placeholder="Email" value="test.student@gmcpnalanda.com">
+        <input type="password" id="userPassword" placeholder="Password" value="TestPass@123">
+        <select id="userRole">
+            <option value="student">Student</option>
+            <option value="teacher">Teacher</option>
+            <option value="management">Management</option>
+            <option value="admin">Admin</option>
+        </select>
+        <button onclick="testCreateUser()">Create User</button>
+        <div id="createResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>3. List All Users</h3>
+        <button onclick="testListUsers()">List Users</button>
+        <div id="listResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>4. Delete User</h3>
+        <input type="email" id="deleteEmail" placeholder="Email to delete" value="test.student@gmcpnalanda.com">
+        <button onclick="testDeleteUser()">Delete User</button>
+        <div id="deleteResult" class="result"></div>
+    </div>
+
+    <script>
+        // Helper function to display results
+        function showResult(elementId, data) {
+            document.getElementById(elementId).textContent = JSON.stringify(data, null, 2);
+        }
+
+        // Test login
+        async function testLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const result = await response.json();
+                showResult('loginResult', result);
+            } catch (error) {
+                showResult('loginResult', { error: error.message });
+            }
+        }
+
+        // Test create user
+        async function testCreateUser() {
+            const userData = {
+                name: document.getElementById('userName').value,
+                email: document.getElementById('userEmail').value,
+                password: document.getElementById('userPassword').value,
+                role: document.getElementById('userRole').value
+            };
+            
+            // Add role-specific data for students
+            if (userData.role === 'student') {
+                userData.branch = 'CSE';
+                userData.year = '2';
+            }
+            
+            try {
+                const response = await fetch('/api/users', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                });
+                
+                const result = await response.json();
+                showResult('createResult', result);
+            } catch (error) {
+                showResult('createResult', { error: error.message });
+            }
+        }
+
+        // Test list users
+        async function testListUsers() {
+            try {
+                const response = await fetch('/api/users', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                showResult('listResult', result);
+            } catch (error) {
+                showResult('listResult', { error: error.message });
+            }
+        }
+
+        // Test delete user
+        async function testDeleteUser() {
+            const email = document.getElementById('deleteEmail').value;
+            
+            try {
+                const response = await fetch(`/api/users/${encodeURIComponent(email)}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                showResult('deleteResult', result);
+            } catch (error) {
+                showResult('deleteResult', { error: error.message });
+            }
+        }
+
+        // Auto-test the existing user login on page load
+        window.addEventListener('load', () => {
+            console.log('Page loaded. You can test the APIs using the buttons above.');
+        });
+    </script>
+</body>
+</html>

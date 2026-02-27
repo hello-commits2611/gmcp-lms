@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hostel Management - GMCP LMS</title>
+    <link rel="stylesheet" href="css/common.css">
+    <style>
+        .hostel-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .hostel-header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 20px;
+        }
+
+        .hostel-header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+
+        .hostel-header p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-section h3 {
+            color: #333;
+            border-left: 4px solid #667eea;
+            padding-left: 15px;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        label .required {
+            color: #e74c3c;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .roommate-section {
+            border: 2px dashed #ddd;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 6px;
+            background-color: #f8f9fa;
+        }
+
+        .roommate-entry {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 15px;
+            align-items: end;
+            margin-bottom: 15px;
+        }
+
+        .roommate-entry:last-child {
+            margin-bottom: 0;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-add-roommate {
+            background: #17a2b8;
+            color: white;
+            margin-top: 10px;
+        }
+
+        .btn-add-roommate:hover {
+            background: #138496;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+        }
+
+        .message {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 6px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .info-message {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .hostel-status {
+            background: #f8f9fa;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .roommate-entry {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-radius: 50%;
+            border-top-color: #667eea;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .readonly-field {
+            background-color: #f8f9fa;
+            border-color: #dee2e6;
+            color: #6c757d;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .detail-value {
+            color: #666;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="messageContainer"></div>
+    
+    <div class="hostel-container">
+        <div class="hostel-header">
+            <h1>🏠 Hostel Management</h1>
+            <p>Manage your hostel information and roommate details</p>
+        </div>
+
+        <div class="hostel-status" id="hostelStatus">
+            <strong>Status:</strong> <span id="statusText">Loading...</span>
+        </div>
+
+        <form id="hostelForm">
+            <!-- Basic Hostel Information -->
+            <div class="form-section">
+                <h3>📋 Basic Hostel Information</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="roomNumber">Room Number <span class="required">*</span></label>
+                        <input type="text" id="roomNumber" name="roomNumber" required 
+                               placeholder="e.g., A-101, B-205" maxlength="10">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="allotmentDate">Hostel Allotment Date <span class="required">*</span></label>
+                        <input type="date" id="allotmentDate" name="allotmentDate" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contactNumber">Your Contact Number <span class="required">*</span></label>
+                        <input type="tel" id="contactNumber" name="contactNumber" required 
+                               placeholder="Enter your contact number" pattern="[0-9]{10}" maxlength="10">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="wardenName">Warden Name</label>
+                        <input type="text" id="wardenName" name="wardenName" 
+                               value="Akarshan Raj Rohan" placeholder="Warden name">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Roommates Information -->
+            <div class="form-section">
+                <h3>👥 Roommates Information</h3>
+                <p style="color: #666; margin-bottom: 15px;">
+                    Add your roommates' details. You can add up to 4 roommates.
+                </p>
+                
+                <div id="roommatesSection">
+                    <!-- Roommate entries will be dynamically added here -->
+                </div>
+                
+                <button type="button" class="btn btn-add-roommate" id="addRoommateBtn">
+                    + Add Roommate
+                </button>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    Save Hostel Information
+                </button>
+                <button type="button" class="btn btn-secondary" id="backBtn">
+                    Back to Dashboard
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        class HostelManager {
+            constructor() {
+                this.currentUser = null;
+                this.roommateCount = 0;
+                this.maxRoommates = 4;
+                this.init();
+            }
+
+            async init() {
+                // Check authentication
+                if (!authManager.isLoggedIn() || !authManager.hasRole('student')) {
+                    showMessage('Access denied. This page is only for students.', 'error');
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 2000);
+                    return;
+                }
+
+                this.currentUser = authManager.getCurrentUser();
+                await this.loadStudentProfile(); // Load student profile to get gender
+                await this.loadHostelData();
+                this.setupEventListeners();
+            }
+
+            async loadHostelData() {
+                try {
+                    const response = await fetch(`/api/hostel/my-hostel?email=${this.currentUser.email}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        credentials: 'include'
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success && result.hostelData) {
+                        // Check if hostel data is complete and restrict editing
+                        if (result.hostelData.isComplete) {
+                            this.showReadOnlyView(result.hostelData);
+                            return;
+                        }
+                        this.populateForm(result.hostelData);
+                        this.updateStatus('Hostel information found. You can update your details below.');
+                    } else {
+                        this.updateStatus('No hostel information found. Please fill in your details.');
+                    }
+                } catch (error) {
+                    console.error('Load hostel data error:', error);
+                    this.updateStatus('Failed to load hostel information.');
+                    showMessage('Failed to load hostel information.', 'error');
+                }
+            }
+
+            populateForm(hostelData) {
+                // Populate basic fields
+                document.getElementById('roomNumber').value = hostelData.roomNumber || '';
+                document.getElementById('allotmentDate').value = hostelData.allotmentDate || '';
+                document.getElementById('contactNumber').value = hostelData.contactNumber || '';
+                
+                // Set warden name based on stored value or gender
+                const wardenName = hostelData.wardenName || this.getDefaultWardenName();
+                document.getElementById('wardenName').value = wardenName;
+
+                // Populate roommates
+                if (hostelData.roommates && Array.isArray(hostelData.roommates)) {
+                    for (let i = 0; i < hostelData.roommates.length; i++) {
+                        this.addRoommateEntry(
+                            hostelData.roommates[i],
+                            hostelData.roommatesContacts[i] || ''
+                        );
+                    }
+                }
+            }
+            
+            getDefaultWardenName() {
+                if (this.studentProfile && this.studentProfile.gender === 'female') {
+                    return 'Muskan';
+                }
+                return 'Akarshan Raj Rohan';
+            }
+
+            updateStatus(message) {
+                const statusText = document.getElementById('statusText');
+                if (statusText) {
+                    statusText.textContent = message;
+                }
+            }
+            
+            async loadStudentProfile() {
+                try {
+                    const response = await fetch('/api/profile', {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        credentials: 'include'
+                    });
+                    
+                    const result = await response.json();
+                    if (result.exists && result.profile) {
+                        this.studentProfile = result.profile;
+                        // Set gender-based warden name
+                        this.setWardenNameByGender(result.profile.gender);
+                    }
+                } catch (error) {
+                    console.error('Error loading student profile:', error);
+                }
+            }
+            
+            setWardenNameByGender(gender) {
+                const wardenNameField = document.getElementById('wardenName');
+                if (wardenNameField) {
+                    if (gender === 'female') {
+                        wardenNameField.value = 'Muskan';
+                    } else {
+                        wardenNameField.value = 'Akarshan Raj Rohan';
+                    }
+                }
+            }
+            
+            showReadOnlyView(hostelData) {
+                const formContainer = document.querySelector('.hostel-container');
+                
+                const roommatesDisplay = hostelData.roommates && hostelData.roommates.length > 0 ? 
+                    hostelData.roommates.map((roommate, index) => `
+                        <div class="detail-row">
+                            <span class="detail-label">Roommate ${index + 1}</span>
+                            <span class="detail-value">${roommate} (${hostelData.roommatesContacts[index] || 'No contact'})</span>
+                        </div>
+                    `).join('') : 
+                    '<div class="detail-row"><span class="detail-label">Roommates</span><span class="detail-value">No roommates</span></div>';
+                
+                formContainer.innerHTML = `
+                    <div class="hostel-header">
+                        <h1>🏠 Hostel Information</h1>
+                        <p>Your hostel information has been submitted and is complete</p>
+                    </div>
+
+                    <div class="hostel-status" style="background: #d4edda; border-left-color: #28a745;">
+                        <strong>Status:</strong> <span style="color: #155724;">✅ Information Complete - No Further Editing Allowed</span>
+                    </div>
+                    
+                    <div class="card" style="background: white; border-radius: 12px; padding: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px;">
+                        <h3 style="color: #333; border-left: 4px solid #28a745; padding-left: 15px; margin-bottom: 25px;">📋 Your Hostel Details</h3>
+                        
+                        <div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Room Number</span>
+                                    <span class="detail-value"><strong>${hostelData.roomNumber}</strong></span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Allotment Date</span>
+                                    <span class="detail-value">${this.formatDate(hostelData.allotmentDate)}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Your Contact</span>
+                                    <span class="detail-value">${hostelData.contactNumber}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Warden Name</span>
+                                    <span class="detail-value">${hostelData.wardenName}</span>
+                                </div>
+                            </div>
+                            <div>
+                                ${roommatesDisplay}
+                                <div class="detail-row">
+                                    <span class="detail-label">Last Updated</span>
+                                    <span class="detail-value">${this.formatDate(hostelData.lastUpdated)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card" style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+                        <h4 style="color: #856404; margin-bottom: 15px;">📝 Need to Make Changes?</h4>
+                        <p style="color: #856404; margin-bottom: 15px;">Once hostel information is submitted, students cannot edit it. If you need to make changes to your hostel information, please contact the administration.</p>
+                        <p style="color: #856404; margin: 0;"><strong>Contact:</strong> admin@gmcpnalanda.com | Phone: +91-9473000022</p>
+                    </div>
+                    
+                    <div class="form-actions" style="display: flex; gap: 15px; justify-content: center; margin-top: 30px; padding-top: 20px; border-top: 2px solid #eee;">
+                        <button type="button" class="btn btn-secondary" onclick="window.location.href='student-portal.html'">
+                            ← Back to Dashboard
+                        </button>
+                        <button type="button" class="btn btn-info" onclick="window.print()">
+                            🖨️ Print Information
+                        </button>
+                    </div>
+                `;
+                
+                this.updateStatus('Your hostel information is complete and cannot be edited by students.');
+            }
+            
+            formatDate(dateString) {
+                if (!dateString) return 'Not provided';
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: 'long',
+                    year: 'numeric'
+                });
+            }
+
+            setupEventListeners() {
+                document.getElementById('addRoommateBtn').addEventListener('click', () => {
+                    this.addRoommateEntry();
+                });
+
+                document.getElementById('hostelForm').addEventListener('submit', (e) => {
+                    this.handleFormSubmit(e);
+                });
+
+                document.getElementById('backBtn').addEventListener('click', () => {
+                    window.location.href = 'student-portal.html';
+                });
+            }
+
+            addRoommateEntry(name = '', contact = '') {
+                if (this.roommateCount >= this.maxRoommates) {
+                    showMessage(`Maximum ${this.maxRoommates} roommates allowed.`, 'error');
+                    return;
+                }
+
+                const roommatesSection = document.getElementById('roommatesSection');
+                const entryDiv = document.createElement('div');
+                entryDiv.className = 'roommate-entry';
+                entryDiv.innerHTML = `
+                    <div class="form-group">
+                        <label>Roommate Name</label>
+                        <input type="text" name="roommateName" value="${name}" 
+                               placeholder="Enter roommate name" maxlength="50">
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Number</label>
+                        <input type="tel" name="roommateContact" value="${contact}" 
+                               placeholder="Enter contact number" pattern="[0-9]{10}" maxlength="10">
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-danger remove-roommate-btn">
+                            Remove
+                        </button>
+                    </div>
+                `;
+
+                // Add remove functionality
+                entryDiv.querySelector('.remove-roommate-btn').addEventListener('click', () => {
+                    entryDiv.remove();
+                    this.roommateCount--;
+                    this.updateAddButton();
+                });
+
+                roommatesSection.appendChild(entryDiv);
+                this.roommateCount++;
+                this.updateAddButton();
+            }
+
+            updateAddButton() {
+                const addBtn = document.getElementById('addRoommateBtn');
+                if (this.roommateCount >= this.maxRoommates) {
+                    addBtn.style.display = 'none';
+                } else {
+                    addBtn.style.display = 'inline-block';
+                }
+            }
+
+            async handleFormSubmit(e) {
+                e.preventDefault();
+                
+                const submitBtn = document.getElementById('submitBtn');
+                const originalText = submitBtn.innerHTML;
+                
+                try {
+                    // Show loading state
+                    submitBtn.innerHTML = '<span class="spinner"></span>Saving...';
+                    submitBtn.disabled = true;
+                    document.getElementById('hostelForm').classList.add('loading');
+
+                    // Collect form data
+                    const formData = this.collectFormData();
+                    
+                    // Validate data
+                    if (!this.validateFormData(formData)) {
+                        return;
+                    }
+
+                    // Send to server
+                    const response = await fetch('/api/hostel/update-hostel', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        credentials: 'include',
+                        body: JSON.stringify(formData)
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        showMessage('Hostel information saved successfully!', 'success');
+                        this.updateStatus('Hostel information is complete and up to date.');
+                        
+                        // Refresh the form with saved data
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1500);
+                    } else {
+                        // Handle specific error for completed hostel info
+                        if (result.error && result.error.includes('already complete')) {
+                            showMessage('Your hostel information is already complete and cannot be edited. Contact administration for changes.', 'error');
+                            // Reload to show read-only view
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 2000);
+                        } else {
+                            showMessage(result.error || 'Failed to save hostel information', 'error');
+                        }
+                    }
+
+                } catch (error) {
+                    console.error('Save error:', error);
+                    showMessage('Network error. Please try again.', 'error');
+                } finally {
+                    // Restore button state
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                    document.getElementById('hostelForm').classList.remove('loading');
+                }
+            }
+
+            collectFormData() {
+                const roommates = [];
+                const roommatesContacts = [];
+                
+                // Collect roommate data
+                document.querySelectorAll('.roommate-entry').forEach(entry => {
+                    const name = entry.querySelector('input[name="roommateName"]').value.trim();
+                    const contact = entry.querySelector('input[name="roommateContact"]').value.trim();
+                    
+                    if (name) { // Only add if name is provided
+                        roommates.push(name);
+                        roommatesContacts.push(contact);
+                    }
+                });
+
+                return {
+                    email: this.currentUser.email,
+                    roomNumber: document.getElementById('roomNumber').value.trim(),
+                    allotmentDate: document.getElementById('allotmentDate').value,
+                    contactNumber: document.getElementById('contactNumber').value.trim(),
+                    wardenName: document.getElementById('wardenName').value.trim() || this.getDefaultWardenName(),
+                    roommates: roommates,
+                    roommatesContacts: roommatesContacts
+                };
+            }
+
+            validateFormData(data) {
+                // Required field validation
+                if (!data.roomNumber) {
+                    showMessage('Room number is required.', 'error');
+                    document.getElementById('roomNumber').focus();
+                    return false;
+                }
+
+                if (!data.allotmentDate) {
+                    showMessage('Hostel allotment date is required.', 'error');
+                    document.getElementById('allotmentDate').focus();
+                    return false;
+                }
+
+                if (!data.contactNumber) {
+                    showMessage('Contact number is required.', 'error');
+                    document.getElementById('contactNumber').focus();
+                    return false;
+                }
+
+                // Contact number validation
+                if (!/^\d{10}$/.test(data.contactNumber)) {
+                    showMessage('Contact number must be exactly 10 digits.', 'error');
+                    document.getElementById('contactNumber').focus();
+                    return false;
+                }
+
+                // Roommate contact validation
+                for (let i = 0; i < data.roommatesContacts.length; i++) {
+                    const contact = data.roommatesContacts[i];
+                    if (contact && !/^\d{10}$/.test(contact)) {
+                        showMessage(`Roommate ${i + 1} contact number must be exactly 10 digits.`, 'error');
+                        return false;
+                    }
+                }
+
+                // Check if roommate names and contacts match
+                if (data.roommates.length !== data.roommatesContacts.length) {
+                    showMessage('Please provide contact numbers for all roommates.', 'error');
+                    return false;
+                }
+
+                return true;
+            }
+        }
+
+        // Initialize the hostel manager when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new HostelManager();
+        });
+    </script>
+</body>
+</html>

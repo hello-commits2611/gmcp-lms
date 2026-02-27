@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GMCP LMS - System Setup</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background: #f5f7fa; }
+        .setup-container { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { color: #667eea; margin-bottom: 10px; }
+        .setup-section { margin: 30px 0; padding: 20px; border-left: 4px solid #667eea; background: #f8f9fa; }
+        .user-card { background: white; margin: 15px 0; padding: 20px; border-radius: 10px; border: 1px solid #ddd; }
+        .user-role { display: inline-block; padding: 4px 12px; border-radius: 15px; font-size: 12px; font-weight: bold; color: white; margin-bottom: 10px; }
+        .role-admin { background: #dc3545; }
+        .role-student { background: #007bff; }
+        .role-teacher { background: #28a745; }
+        .role-management { background: #ffc107; color: #333; }
+        .credentials { background: #e9ecef; padding: 10px; border-radius: 5px; font-family: monospace; }
+        .btn { padding: 15px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: 600; margin: 10px; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3); }
+        .btn-danger { background: #dc3545; }
+        .status { padding: 15px; margin: 15px 0; border-radius: 10px; }
+        .status.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .status.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .status.info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+    </style>
+</head>
+<body>
+    <div class="setup-container">
+        <div class="header">
+            <h1>🎓 GMCP LMS System Setup</h1>
+            <p>Initialize your Learning Management System with example users</p>
+        </div>
+
+        <div class="setup-section">
+            <h3>🔧 System Initialization</h3>
+            <p>Click the button below to create example users for testing all portal types:</p>
+            <button class="btn" onclick="initializeExampleUsers()">🚀 Create Example Users</button>
+            <button class="btn btn-danger" onclick="clearAllData()">🗑️ Clear All Data</button>
+        </div>
+
+        <div id="status-container"></div>
+
+        <div class="setup-section">
+            <h3>👤 Default Users</h3>
+            <p>After initialization, you can log in with these accounts:</p>
+
+            <div class="user-card">
+                <div class="user-role role-admin">ADMIN</div>
+                <h4>System Administrator</h4>
+                <div class="credentials">
+                    <strong>Email:</strong> admin@gmcpnalanda.com<br>
+                    <strong>Password:</strong> AdminGMCP@2025
+                </div>
+                <p><em>Full system access, user management, and configuration</em></p>
+            </div>
+
+            <div class="user-card">
+                <div class="user-role role-student">STUDENT</div>
+                <h4>John Student</h4>
+                <div class="credentials">
+                    <strong>Email:</strong> john.student@gmcpnalanda.com<br>
+                    <strong>Password:</strong> Student@123
+                </div>
+                <p><em>Student portal access, courses, assignments, and grades</em></p>
+            </div>
+
+            <div class="user-card">
+                <div class="user-role role-teacher">TEACHER</div>
+                <h4>Prof. Jane Teacher</h4>
+                <div class="credentials">
+                    <strong>Email:</strong> jane.teacher@gmcpnalanda.com<br>
+                    <strong>Password:</strong> Teacher@123
+                </div>
+                <p><em>Faculty portal access, course management, and student evaluation</em></p>
+            </div>
+
+            <div class="user-card">
+                <div class="user-role role-management">MANAGEMENT</div>
+                <h4>Dr. Principal Manager</h4>
+                <div class="credentials">
+                    <strong>Email:</strong> principal@gmcpnalanda.com<br>
+                    <strong>Password:</strong> Manager@123
+                </div>
+                <p><em>Management portal access, reports, and oversight functions</em></p>
+            </div>
+        </div>
+
+        <div class="setup-section">
+            <h3>🚀 Next Steps</h3>
+            <p>After creating example users:</p>
+            <ol>
+                <li>Go to <strong><a href="login.html">Login Page</a></strong></li>
+                <li>Use any of the credentials above to log in</li>
+                <li>You'll be automatically redirected to the appropriate portal based on your role</li>
+                <li>Use the <strong>Admin</strong> account to create more users via the Admin Panel</li>
+            </ol>
+        </div>
+
+        <div class="setup-section">
+            <h3>📋 System Status</h3>
+            <p>Current system information:</p>
+            <div id="system-info">
+                <p><strong>Total Users:</strong> <span id="user-count">Loading...</span></p>
+                <p><strong>System Ready:</strong> <span id="system-status">Checking...</span></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/userManager.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        function showStatus(message, type = 'info') {
+            const container = document.getElementById('status-container');
+            container.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        function initializeExampleUsers() {
+            try {
+                showStatus('🔄 Creating example users...', 'info');
+                
+                // Create example users
+                userManager.initializeExampleUsers();
+                
+                // Update status
+                updateSystemInfo();
+                showStatus('✅ Example users created successfully! You can now log in with the credentials shown above.', 'success');
+                
+            } catch (error) {
+                console.error('Initialization error:', error);
+                showStatus('❌ Error creating example users: ' + error.message, 'error');
+            }
+        }
+
+        function clearAllData() {
+            if (confirm('⚠️ This will delete all user data. Are you sure?')) {
+                try {
+                    localStorage.removeItem('gmcp_lms_users');
+                    sessionStorage.clear();
+                    showStatus('🗑️ All data cleared. The system will reinitialize with default admin account only.', 'info');
+                    
+                    // Reinitialize userManager
+                    window.userManager = new UserManager();
+                    updateSystemInfo();
+                    
+                } catch (error) {
+                    showStatus('❌ Error clearing data: ' + error.message, 'error');
+                }
+            }
+        }
+
+        function updateSystemInfo() {
+            try {
+                const users = userManager.getAllUsers();
+                document.getElementById('user-count').textContent = users.length;
+                
+                const hasAdmin = users.some(u => u.role === 'admin');
+                const hasExampleUsers = users.some(u => u.email.includes('john.student') || u.email.includes('jane.teacher'));
+                
+                const statusElement = document.getElementById('system-status');
+                if (hasAdmin && hasExampleUsers) {
+                    statusElement.innerHTML = '<span style="color: #28a745;">✅ Ready with example users</span>';
+                } else if (hasAdmin) {
+                    statusElement.innerHTML = '<span style="color: #ffc107;">⚠️ Admin only (click "Create Example Users")</span>';
+                } else {
+                    statusElement.innerHTML = '<span style="color: #dc3545;">❌ Not initialized</span>';
+                }
+            } catch (error) {
+                document.getElementById('user-count').textContent = 'Error';
+                document.getElementById('system-status').innerHTML = '<span style="color: #dc3545;">❌ Error</span>';
+            }
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            updateSystemInfo();
+            showStatus('🎯 Welcome to GMCP LMS Setup. Initialize your system to get started!', 'info');
+        });
+    </script>
+</body>
+</html>

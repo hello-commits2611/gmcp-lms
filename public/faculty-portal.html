@@ -1,0 +1,1970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Portal - GMCP LMS</title>
+    <link rel="icon" type="image/jpeg" href="images/logo.jpg">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-left img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .header-text h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .header-text .subtitle {
+            font-size: 0.875rem;
+            opacity: 0.95;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9375rem;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            opacity: 0.85;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1.5px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.625rem 1.25rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-1px);
+        }
+
+        /* Navigation */
+        .navigation {
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            padding: 0 2rem;
+        }
+
+        .nav-item {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            color: #64748b;
+        }
+
+        .nav-item:hover:not(.disabled) {
+            background: #f8fafc;
+            color: #00b894;
+        }
+
+        .nav-item.active {
+            border-bottom-color: #00b894;
+            color: #00b894;
+            background: #f8fafc;
+        }
+
+        .nav-item.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Profile Card */
+        .profile-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+        }
+
+        /* Form Styles */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #334155;
+            font-size: 0.875rem;
+        }
+
+        .form-group label .required {
+            color: #dc3545;
+            margin-left: 2px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-size: 0.9375rem;
+            transition: all 0.2s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #00b894;
+            box-shadow: 0 0 0 3px rgba(0, 184, 148, 0.1);
+        }
+
+        .form-control:disabled {
+            background: #f1f5f9;
+            cursor: not-allowed;
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        select.form-control {
+            cursor: pointer;
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9375rem;
+        }
+
+        .btn-primary {
+            background: #00b894;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #00a085;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 184, 148, 0.3);
+        }
+
+        .btn-primary:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-center {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        /* Profile View (Read-only) */
+        .profile-view-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .profile-field {
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+        }
+
+        .profile-field.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .profile-field-label {
+            font-size: 0.8125rem;
+            color: #64748b;
+            margin-bottom: 0.375rem;
+            font-weight: 500;
+        }
+
+        .profile-field-value {
+            font-size: 1rem;
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        /* Info Box */
+        .info-box {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-box.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .info-box.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .info-box.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+
+        /* Message Box */
+        .message-box {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .message-box.success {
+            background: #00b894;
+            color: white;
+        }
+
+        .message-box.error {
+            background: #dc3545;
+            color: white;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #00b894;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-container {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        /* Dashboard Placeholder */
+        .dashboard-placeholder {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .dashboard-placeholder-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .dashboard-placeholder-text {
+            font-size: 1.25rem;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-placeholder-subtext {
+            color: #94a3b8;
+        }
+
+        /* Modern Attendance Section Styles */
+        .attendance-modern-header {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 0 0 30px 30px;
+            text-align: center;
+            margin: -2rem -2rem 2rem -2rem;
+            box-shadow: 0 4px 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .attendance-modern-header .logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .attendance-modern-header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .attendance-modern-header .subtitle {
+            font-size: 0.875rem;
+            opacity: 0.95;
+        }
+
+        .attendance-page-title {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 2rem;
+        }
+
+        .attendance-form-modern {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .form-group-modern {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group-modern label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #334155;
+            font-size: 0.875rem;
+        }
+
+        .form-control-modern {
+            width: 100%;
+            padding: 0.875rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .form-control-modern:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+
+        .btn-modern {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+
+        .btn-modern-primary {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-modern-primary:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-modern-secondary {
+            background: #f5f7fa;
+            color: #334155;
+            margin-top: 0.5rem;
+        }
+
+        .btn-modern-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        /* Student List Modern Design */
+        .student-list-modern {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .student-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .student-list-header h3 {
+            color: #1a1a1a;
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .student-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border-radius: 12px;
+            background: #f8f9fa;
+            transition: all 0.3s;
+        }
+
+        .student-row.present {
+            background: #d4edda;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .student-row.absent {
+            background: #f8d7da;
+            border-left: 4px solid #f44336;
+        }
+
+        .student-info {
+            flex: 1;
+        }
+
+        .student-name {
+            font-weight: 600;
+            color: #1a1a1a;
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .student-id {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .attendance-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .attendance-btn {
+            width: 60px;
+            height: 40px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .attendance-btn.present-btn {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .attendance-btn.absent-btn {
+            background: #f44336;
+            color: white;
+        }
+
+        .attendance-btn.inactive {
+            opacity: 0.4;
+        }
+
+        .attendance-btn:hover:not(.inactive) {
+            transform: scale(1.05);
+        }
+
+        /* Last 7 Days View */
+        .last-7-days-container {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .last-7-days-table {
+            width: 100%;
+            border-collapse: collapse;
+            overflow-x: auto;
+        }
+
+        .last-7-days-table th,
+        .last-7-days-table td {
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .last-7-days-table th {
+            background: #f8f9fa;
+            font-weight: 700;
+            color: #1a1a1a;
+            font-size: 0.875rem;
+        }
+
+        .periods-row {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .period-circle-small {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        .period-circle-present {
+            background: #4CAF50;
+        }
+
+        .period-circle-absent {
+            background: #f44336;
+        }
+
+        .period-circle-not-marked {
+            background: #9e9e9e;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-grid,
+            .profile-view-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .attendance-modern-header {
+                margin: -2rem -1rem 2rem -1rem;
+            }
+
+            .student-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .attendance-controls {
+                width: 100%;
+                justify-content: flex-end;
+            }
+
+            .last-7-days-table {
+                font-size: 0.875rem;
+            }
+
+            .period-circle-small {
+                width: 32px;
+                height: 32px;
+                font-size: 0.75rem;
+            }
+        }
+
+            .header-content {
+                padding: 0 1rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .user-info {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <img src="images/logo.jpg" alt="GMCP Logo">
+                <div class="header-text">
+                    <h1>Faculty Portal</h1>
+                    <div class="subtitle">Ganga Memorial College of Polytechnic, Harnaut, Nalanda</div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <div class="user-name" id="userName">Loading...</div>
+                    <div class="user-role">Faculty Member</div>
+                </div>
+                <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="navigation">
+        <div class="nav-content">
+            <div class="nav-item disabled" id="dashboardNav" onclick="showSection('dashboard')">📊 Dashboard</div>
+            <div class="nav-item active" onclick="showSection('profile')">👤 My Profile</div>
+            <div class="nav-item" id="attendanceNav" onclick="showSection('attendance')">📋 Mark Attendance</div>
+            <div class="nav-item" id="reportsNav" onclick="showSection('reports')">📊 Attendance Reports</div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- My Profile Section -->
+        <section id="profile" class="page-section active">
+            <h2>My Profile</h2>
+            
+            <!-- Loading State -->
+            <div id="profileLoading" class="loading-container">
+                <div class="spinner"></div>
+                <p>Loading profile...</p>
+            </div>
+
+            <!-- Profile Form (First Time) -->
+            <div id="profileForm" style="display: none;">
+                <div class="info-box warning">
+                    <strong>⚠️ Profile Completion Required</strong><br>
+                    Please complete your profile to access the faculty dashboard. All fields marked with <span style="color: #dc3545;">*</span> are mandatory.
+                </div>
+
+                <div class="profile-card">
+                    <form id="facultyProfileForm">
+                        <div class="form-grid">
+                            <!-- Full Name -->
+                            <div class="form-group">
+                                <label>Full Name <span class="required">*</span></label>
+                                <input type="text" class="form-control" id="fullName" name="fullName" required>
+                            </div>
+
+                            <!-- Email (Disabled) -->
+                            <div class="form-group">
+                                <label>Email <span class="required">*</span></label>
+                                <input type="email" class="form-control" id="email" name="email" disabled required>
+                            </div>
+
+                            <!-- Mobile Number -->
+                            <div class="form-group">
+                                <label>Mobile Number <span class="required">*</span></label>
+                                <input type="tel" class="form-control" id="mobileNumber" name="mobileNumber" placeholder="+91-XXXXXXXXXX" required>
+                            </div>
+
+                            <!-- Date of Birth -->
+                            <div class="form-group">
+                                <label>Date of Birth <span class="required">*</span></label>
+                                <input type="date" class="form-control" id="dateOfBirth" name="dateOfBirth" required>
+                            </div>
+
+                            <!-- Gender -->
+                            <div class="form-group">
+                                <label>Gender <span class="required">*</span></label>
+                                <select class="form-control" id="gender" name="gender" required>
+                                    <option value="">Select Gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+
+                            <!-- Employee ID -->
+                            <div class="form-group">
+                                <label>Employee ID <span class="required">*</span></label>
+                                <input type="text" class="form-control" id="employeeId" name="employeeId" placeholder="FAC001" disabled required>
+                            </div>
+
+                            <!-- Designation -->
+                            <div class="form-group">
+                                <label>Designation <span class="required">*</span></label>
+                                <input type="text" class="form-control" id="designation" name="designation" placeholder="e.g., Assistant Professor, HOD" required>
+                            </div>
+
+                            <!-- Department -->
+                            <div class="form-group">
+                                <label>Department <span class="required">*</span></label>
+                                <select class="form-control" id="department" name="department" required>
+                                    <option value="">Select Department</option>
+                                    <option value="Computer Science">Computer Science & Engineering</option>
+                                    <option value="Electrical">Electrical Engineering</option>
+                                    <option value="Mechanical">Mechanical Engineering</option>
+                                    <option value="Civil">Civil Engineering</option>
+                                    <option value="Electronics">Electronics Engineering</option>
+                                    <option value="General">General Studies</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+
+                            <!-- Subject Specialization -->
+                            <div class="form-group">
+                                <label>Subject Specialization <span class="required">*</span></label>
+                                <input type="text" class="form-control" id="subjectSpecialization" name="subjectSpecialization" placeholder="e.g., Data Structures, Circuit Theory" required>
+                            </div>
+
+                            <!-- Qualification -->
+                            <div class="form-group">
+                                <label>Qualification <span class="required">*</span></label>
+                                <input type="text" class="form-control" id="qualification" name="qualification" placeholder="e.g., M.Tech, Ph.D." required>
+                            </div>
+
+                            <!-- Total Experience -->
+                            <div class="form-group">
+                                <label>Total Experience <span class="required">*</span></label>
+                                <input type="text" class="form-control" id="totalExperience" name="totalExperience" placeholder="e.g., 5 years" required>
+                            </div>
+
+                            <!-- Date of Joining -->
+                            <div class="form-group">
+                                <label>Date of Joining <span class="required">*</span></label>
+                                <input type="date" class="form-control" id="dateOfJoining" name="dateOfJoining" required>
+                            </div>
+
+                            <!-- Employment Type -->
+                            <div class="form-group">
+                                <label>Employment Type <span class="required">*</span></label>
+                                <select class="form-control" id="employmentType" name="employmentType" required>
+                                    <option value="">Select Employment Type</option>
+                                    <option value="Permanent">Permanent</option>
+                                    <option value="Contract">Contract</option>
+                                    <option value="Guest">Guest Faculty</option>
+                                    <option value="Visiting">Visiting Faculty</option>
+                                </select>
+                            </div>
+
+                            <!-- Address (Full Width) -->
+                            <div class="form-group full-width">
+                                <label>Address <span class="required">*</span></label>
+                                <textarea class="form-control" id="address" name="address" placeholder="Enter your complete address" required></textarea>
+                            </div>
+                        </div>
+
+                        <div class="btn-center">
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
+                                📝 Submit Profile & Access Dashboard
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Profile View (After Submission) -->
+            <div id="profileView" style="display: none;">
+                <div class="info-box success">
+                    <strong>✅ Profile Completed</strong><br>
+                    Your profile was submitted on <span id="completedDate">-</span>. To update your profile, please contact the Admin.
+                </div>
+
+                <div class="profile-card">
+                    <h3 style="margin-bottom: 1.5rem; color: #00b894;">Personal & Professional Details</h3>
+                    <div class="profile-view-grid" id="profileViewContent">
+                        <!-- Profile fields will be dynamically inserted here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="page-section">
+            <h2>Dashboard</h2>
+            <div class="profile-card">
+                <div class="dashboard-placeholder">
+                    <div class="dashboard-placeholder-icon">📊</div>
+                    <div class="dashboard-placeholder-text">Welcome to Your Dashboard</div>
+                    <div class="dashboard-placeholder-subtext">Dashboard features will be available soon</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ATTENDANCE SECTION -->
+        <section id="attendance" class="page-section">
+            <div class="profile-card">
+                <!-- Modern Green Header -->
+                <div class="attendance-modern-header">
+                    <img src="images/logo.jpg" alt="GMCP Logo" class="logo">
+                    <h1>GANGA MEMORIAL</h1>
+                    <p class="subtitle">COLLEGE OF POLYTECHNIC, HARNAUT, NALANDA</p>
+                    <p class="subtitle">(Ganga Memorial Educational and Development Society)</p>
+                </div>
+                
+                <h2 class="attendance-page-title">Lectures & Attendance <span id="currentDateDisplay"></span></h2>
+                
+                <!-- Selection Form -->
+                <div class="attendance-form-modern">
+                    <div class="form-group-modern">
+                        <label>Session</label>
+                        <select class="form-control-modern" id="attendanceSession" required>
+                            <option value="">Select Session</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group-modern">
+                        <label>Branch</label>
+                        <select class="form-control-modern" id="attendanceBranch" required>
+                            <option value="">Select Branch</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group-modern">
+                        <label>Semester</label>
+                        <select class="form-control-modern" id="attendanceSemester" required>
+                            <option value="">Select Semester</option>
+                            <option value="1">Semester-1</option>
+                            <option value="2">Semester-2</option>
+                            <option value="3">Semester-3</option>
+                            <option value="4">Semester-4</option>
+                            <option value="5">Semester-5</option>
+                            <option value="6">Semester-6</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group-modern">
+                        <label>Period</label>
+                        <select class="form-control-modern" id="attendancePeriod" required>
+                            <option value="">Select Period</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group-modern">
+                        <label>Subject</label>
+                        <select class="form-control-modern" id="attendanceSubject" required>
+                            <option value="">Select Subject</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group-modern">
+                        <label>Unit (Optional)</label>
+                        <select class="form-control-modern" id="attendanceUnit">
+                            <option value="">Select Unit</option>
+                            <option value="Unit-1">Unit-1</option>
+                            <option value="Unit-2">Unit-2</option>
+                            <option value="Unit-3">Unit-3</option>
+                            <option value="Unit-4">Unit-4</option>
+                            <option value="Unit-5">Unit-5</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn-modern btn-modern-primary" onclick="loadStudentList()" id="loadStudentBtn">
+                        SUBMIT
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Student List -->
+            <div id="studentListContainer" style="display: none;">
+                <div class="student-list-modern">
+                    <div class="student-list-header">
+                        <h3>📅 Last 7 Days Attendance</h3>
+                    </div>
+                    
+                    <div id="studentListTable">
+                        <!-- Student list will be loaded here -->
+                    </div>
+                    
+                    <button class="btn-modern btn-modern-primary" onclick="submitAttendance()" id="submitAttendanceBtn">
+                        💾 SUBMIT ATTENDANCE
+                    </button>
+                    <button class="btn-modern btn-modern-secondary" onclick="cancelAttendance()">
+                        ❌ CANCEL
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ATTENDANCE REPORTS SECTION -->
+        <section id="reports" class="page-section">
+            <div class="profile-card">
+                <!-- Modern Green Header -->
+                <div class="attendance-modern-header">
+                    <img src="images/logo.jpg" alt="GMCP Logo" class="logo">
+                    <h1>GANGA MEMORIAL</h1>
+                    <p class="subtitle">COLLEGE OF POLYTECHNIC, HARNAUT, NALANDA</p>
+                    <p class="subtitle">(Ganga Memorial Educational and Development Society)</p>
+                </div>
+                
+                <h2 class="attendance-page-title">Attendance Reports</h2>
+                
+                <!-- Filters Form -->
+                <div class="attendance-form-modern">
+                    <div class="form-group-modern">
+                        <label>Session</label>
+                        <select class="form-control-modern" id="reportSession" required>
+                            <option value="">Select Session</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group-modern">
+                        <label>Branch</label>
+                        <select class="form-control-modern" id="reportBranch" required>
+                            <option value="">Select Branch</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group-modern">
+                        <label>Semester</label>
+                        <select class="form-control-modern" id="reportSemester" required>
+                            <option value="">Select Semester</option>
+                            <option value="1">Semester-1</option>
+                            <option value="2">Semester-2</option>
+                            <option value="3">Semester-3</option>
+                            <option value="4">Semester-4</option>
+                            <option value="5">Semester-5</option>
+                            <option value="6">Semester-6</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group-modern">
+                        <label>Subject</label>
+                        <select class="form-control-modern" id="reportSubject" required>
+                            <option value="">Select Subject</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group-modern">
+                        <label>From Date</label>
+                        <input type="date" class="form-control-modern" id="reportFromDate" required>
+                    </div>
+                    
+                    <div class="form-group-modern">
+                        <label>To Date</label>
+                        <input type="date" class="form-control-modern" id="reportToDate" required>
+                    </div>
+                    
+                    <button class="btn-modern btn-modern-primary" onclick="generateAttendanceReport()" id="generateReportBtn">
+                        GENERATE REPORT
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Report Display -->
+            <div id="reportContainer" style="display: none;">
+                <div class="last-7-days-container">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h3 id="reportTitle">📅 Last 7 Days Attendance</h3>
+                        <div id="reportSummary" style="font-size: 0.9rem; color: #64748b;">
+                            <!-- Summary will be inserted here -->
+                        </div>
+                    </div>
+                    
+                    <div id="reportTableContainer" style="overflow-x: auto;">
+                        <!-- Report table will be generated here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Message Box -->
+    <div id="messageBox" class="message-box"></div>
+
+    <script>
+        // Global variables
+        let currentUser = null;
+        let facultyProfile = null;
+
+        // Initialize app on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initializeApp();
+        });
+
+        // Initialize application
+        async function initializeApp() {
+            const isAuthenticated = await checkAuthentication();
+            if (isAuthenticated) {
+                await loadFacultyProfile();
+            }
+        }
+
+        // Check authentication
+        async function checkAuthentication() {
+            try {
+                const response = await fetch('/api/auth/check', {
+                    credentials: 'include'
+                });
+
+                if (!response.ok) {
+                    window.location.href = '/login.html';
+                    return false;
+                }
+
+                const data = await response.json();
+                if (!data.authenticated) {
+                    window.location.href = '/login.html';
+                    return false;
+                }
+
+                currentUser = data.user;
+
+                // Check if user is a teacher
+                if (currentUser.role !== 'teacher') {
+                    showMessage('Access denied. This portal is for faculty members only.', 'error');
+                    setTimeout(() => {
+                        window.location.href = '/login.html';
+                    }, 2000);
+                    return false;
+                }
+
+                // Update header with user info
+                document.getElementById('userName').textContent = currentUser.name || currentUser.email;
+
+                // Check if user needs to change password
+                if (currentUser.mustChangePassword) {
+                    const userParam = encodeURIComponent(JSON.stringify(currentUser));
+                    window.location.href = `/change-password.html?user=${userParam}`;
+                    return false;
+                }
+
+                return true;
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                window.location.href = '/login.html';
+                return false;
+            }
+        }
+
+        // Load faculty profile
+        async function loadFacultyProfile() {
+            const profileLoading = document.getElementById('profileLoading');
+            const profileForm = document.getElementById('profileForm');
+            const profileView = document.getElementById('profileView');
+
+            try {
+                const response = await fetch(`/api/faculty/profile/${encodeURIComponent(currentUser.email)}`, {
+                    credentials: 'include'
+                });
+
+                profileLoading.style.display = 'none';
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.profile && data.profile.profileCompleted) {
+                        // Profile exists and is complete
+                        facultyProfile = data.profile;
+                        showProfileView(data.profile);
+                        enableDashboard();
+                    } else {
+                        // Profile not complete
+                        showProfileForm();
+                    }
+                } else if (response.status === 404) {
+                    // No profile found - show form
+                    showProfileForm();
+                } else {
+                    throw new Error('Failed to load profile');
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                profileLoading.style.display = 'none';
+                showProfileForm();
+            }
+        }
+
+        // Show profile form
+        function showProfileForm() {
+            document.getElementById('profileForm').style.display = 'block';
+            document.getElementById('profileView').style.display = 'none';
+            
+            // Pre-fill email and employee ID
+            document.getElementById('email').value = currentUser.email;
+            document.getElementById('employeeId').value = currentUser.employeeId || currentUser.studentId || '';
+            
+            // Setup form submission
+            document.getElementById('facultyProfileForm').addEventListener('submit', handleProfileSubmit);
+        }
+
+        // Show profile view (read-only)
+        function showProfileView(profile) {
+            document.getElementById('profileForm').style.display = 'none';
+            document.getElementById('profileView').style.display = 'block';
+
+            // Set completion date
+            if (profile.completedAt) {
+                const date = new Date(profile.completedAt);
+                document.getElementById('completedDate').textContent = date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            }
+
+            // Build profile view content
+            const profileViewContent = document.getElementById('profileViewContent');
+            profileViewContent.innerHTML = `
+                <div class="profile-field">
+                    <div class="profile-field-label">Full Name</div>
+                    <div class="profile-field-value">${profile.fullName || '-'}</div>
+                </div>
+                <div class="profile-field">
+                    <div class="profile-field-label">Email</div>
+                    <div class="profile-field-value">${profile.email || '-'}</div>
+                </div>
+                <div class="profile-field">
+                    <div class="profile-field-label">Mobile Number</div>
+                    <div class="profile-field-value">${profile.mobileNumber || '-'}</div>
+                </div>
+                <div class="profile-field">
+                    <div class="profile-field-label">Date of Birth</div>
+                    <div class="profile-field-value">${profile.dateOfBirth ? new Date(profile.dateOfBirth).toLocaleDateString() : '-'}</div>
+                </div>
+                <div class="profile-field">
+                    <div class="profile-field-label">Gender</div>
+                    <div class="profile-field-value">${profile.gender ? profile.gender.charAt(0).toUpperCase() + profile.gender.slice(1) : '-'}</div>
+                </div>
+                <div class="profile-field">
+                    <div class="profile-field-label">Employee ID</div>
+                    <div class="profile-field-value">${profile.employeeId || '-'}</div>
+                </div>
+                <div class="profile-field">
+                    <div class="profile-field-label">Designation</div>
+                    <div class="profile-field-value">${profile.designation || '-'}</div>
+                </div>
+                <div class="profile-field">
+                    <div class="profile-field-label">Department</div>
+                    <div class="profile-field-value">${profile.department || '-'}</div>
+                </div>
+                <div class="profile-field">
+                    <div class="profile-field-label">Subject Specialization</div>
+                    <div class="profile-field-value">${profile.subjectSpecialization || '-'}</div>
+                </div>
+                <div class="profile-field">
+                    <div class="profile-field-label">Qualification</div>
+                    <div class="profile-field-value">${profile.qualification || '-'}</div>
+                </div>
+                <div class="profile-field">
+                    <div class="profile-field-label">Total Experience</div>
+                    <div class="profile-field-value">${profile.totalExperience || '-'}</div>
+                </div>
+                <div class="profile-field">
+                    <div class="profile-field-label">Date of Joining</div>
+                    <div class="profile-field-value">${profile.dateOfJoining ? new Date(profile.dateOfJoining).toLocaleDateString() : '-'}</div>
+                </div>
+                <div class="profile-field">
+                    <div class="profile-field-label">Employment Type</div>
+                    <div class="profile-field-value">${profile.employmentType || '-'}</div>
+                </div>
+                <div class="profile-field full-width">
+                    <div class="profile-field-label">Address</div>
+                    <div class="profile-field-value">${profile.address || '-'}</div>
+                </div>
+            `;
+        }
+
+        // Handle profile form submission
+        async function handleProfileSubmit(e) {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Submitting...';
+
+            try {
+                const formData = new FormData(e.target);
+                const profileData = {
+                    email: currentUser.email,
+                    fullName: formData.get('fullName'),
+                    mobileNumber: formData.get('mobileNumber'),
+                    dateOfBirth: formData.get('dateOfBirth'),
+                    gender: formData.get('gender'),
+                    employeeId: currentUser.employeeId || currentUser.studentId || '',
+                    designation: formData.get('designation'),
+                    department: formData.get('department'),
+                    subjectSpecialization: formData.get('subjectSpecialization'),
+                    qualification: formData.get('qualification'),
+                    totalExperience: formData.get('totalExperience'),
+                    dateOfJoining: formData.get('dateOfJoining'),
+                    employmentType: formData.get('employmentType'),
+                    address: formData.get('address')
+                };
+
+                const response = await fetch('/api/faculty/profile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(profileData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    showMessage('✅ Profile submitted successfully! Dashboard is now accessible.', 'success');
+                    
+                    // Reload profile after short delay
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    showMessage('❌ ' + (result.error || 'Failed to submit profile'), 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '📝 Submit Profile & Access Dashboard';
+                }
+            } catch (error) {
+                console.error('Error submitting profile:', error);
+                showMessage('❌ Error submitting profile. Please try again.', 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = '📝 Submit Profile & Access Dashboard';
+            }
+        }
+
+        // Enable dashboard navigation
+        function enableDashboard() {
+            const dashboardNav = document.getElementById('dashboardNav');
+            dashboardNav.classList.remove('disabled');
+        }
+
+        // Show section
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Remove active class from nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+
+            // Add active class to clicked nav item
+            event.target.classList.add('active');
+        }
+
+        // Show message
+        function showMessage(message, type) {
+            const messageBox = document.getElementById('messageBox');
+            messageBox.textContent = message;
+            messageBox.className = `message-box ${type}`;
+            messageBox.style.display = 'block';
+
+            setTimeout(() => {
+                messageBox.style.display = 'none';
+            }, 5000);
+        }
+
+        // Logout function
+        async function logout() {
+            try {
+                await fetch('/api/auth/logout', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                window.location.href = '/login.html';
+            } catch (error) {
+                console.error('Logout failed:', error);
+                window.location.href = '/login.html';
+            }
+        }
+        
+        // ========================================================================
+        // ATTENDANCE MANAGEMENT FUNCTIONS
+        // ========================================================================
+        
+        let attendanceData = {
+            sessions: [],
+            branches: [],
+            periods: [],
+            subjects: [],
+            students: [],
+            selectedDate: '',
+            selectedSession: '',
+            selectedBranch: '',
+            selectedSemester: '',
+            selectedPeriod: '',
+            selectedSubject: ''
+        };
+        
+        // Load attendance configuration on page load
+        async function loadAttendanceConfiguration() {
+            try {
+                // Load sessions
+                const sessionsRes = await fetch('/api/attendance/sessions', { credentials: 'include' });
+                const sessionsData = await sessionsRes.json();
+                if (sessionsData.success) {
+                    attendanceData.sessions = sessionsData.sessions;
+                    populateSessionDropdown();
+                }
+                
+                // Load branches
+                const branchesRes = await fetch('/api/attendance/branches', { credentials: 'include' });
+                const branchesData = await branchesRes.json();
+                if (branchesData.success) {
+                    attendanceData.branches = branchesData.branches;
+                    populateBranchDropdown();
+                }
+                
+                // Load periods
+                const periodsRes = await fetch('/api/attendance/periods', { credentials: 'include' });
+                const periodsData = await periodsRes.json();
+                if (periodsData.success) {
+                    attendanceData.periods = periodsData.periods;
+                    populatePeriodDropdown();
+                }
+                
+                // Set today's date in the header display
+                const today = new Date();
+                const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                document.getElementById('currentDateDisplay').textContent = today.toLocaleDateString('en-US', options);
+                
+                // Store today's date for submission
+                attendanceData.selectedDate = today.toISOString().split('T')[0];
+                
+            } catch (error) {
+                console.error('Error loading attendance configuration:', error);
+            }
+        }
+        
+        function populateSessionDropdown() {
+            const select = document.getElementById('attendanceSession');
+            select.innerHTML = '<option value="">Select Session</option>' +
+                attendanceData.sessions.map(s => `<option value="${s.id}">${s.name || s.id}</option>`).join('');
+        }
+        
+        function populateBranchDropdown() {
+            const select = document.getElementById('attendanceBranch');
+            select.innerHTML = '<option value="">Select Branch</option>' +
+                attendanceData.branches.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
+        }
+        
+        function populatePeriodDropdown() {
+            const select = document.getElementById('attendancePeriod');
+            select.innerHTML = '<option value="">Select Period</option>' +
+                attendanceData.periods.map(p => `<option value="${p.id}">${p.name} (${p.startTime}-${p.endTime})</option>`).join('');
+        }
+        
+        // Load subjects based on session and branch selection
+        document.getElementById('attendanceSession')?.addEventListener('change', loadSubjects);
+        document.getElementById('attendanceBranch')?.addEventListener('change', loadSubjects);
+        document.getElementById('attendanceSemester')?.addEventListener('change', loadSubjects);
+        
+        async function loadSubjects() {
+            const session = document.getElementById('attendanceSession').value;
+            const branch = document.getElementById('attendanceBranch').value;
+            const semester = document.getElementById('attendanceSemester').value;
+            
+            if (!session || !branch || !semester) return;
+            
+            try {
+                const res = await fetch(`/api/attendance/subjects?sessionId=${session}&branchId=${branch}&semester=${semester}`, {
+                    credentials: 'include'
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    attendanceData.subjects = data.subjects;
+                    const select = document.getElementById('attendanceSubject');
+                    select.innerHTML = '<option value="">Select Subject</option>' +
+                        data.subjects.map(s => `<option value="${s.id}">${s.subjectName} (${s.subjectCode})</option>`).join('');
+                }
+            } catch (error) {
+                console.error('Error loading subjects:', error);
+            }
+        }
+        
+        // Load student list
+        async function loadStudentList() {
+            const session = document.getElementById('attendanceSession').value;
+            const branch = document.getElementById('attendanceBranch').value;
+            const semester = document.getElementById('attendanceSemester').value;
+            const period = document.getElementById('attendancePeriod').value;
+            const subject = document.getElementById('attendanceSubject').value;
+            
+            if (!session || !branch || !semester || !period || !subject) {
+                showMessage('⚠️ Please fill all required fields', 'error');
+                return;
+            }
+            
+            // Store selections (date already set from today)
+            attendanceData.selectedSession = session;
+            attendanceData.selectedBranch = branch;
+            attendanceData.selectedSemester = semester;
+            attendanceData.selectedPeriod = period;
+            attendanceData.selectedSubject = subject;
+            
+            try {
+                const res = await fetch(`/api/attendance/student-list?sessionId=${session}&branchId=${branch}&semester=${semester}`, {
+                    credentials: 'include'
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    attendanceData.students = data.students;
+                    if (data.students.length === 0) {
+                        showMessage('⚠️ No students enrolled in this class', 'error');
+                        return;
+                    }
+                    displayStudentList(data.students);
+                    document.getElementById('studentListContainer').style.display = 'block';
+                } else {
+                    showMessage('❌ ' + (data.error || 'Failed to load students'), 'error');
+                }
+            } catch (error) {
+                console.error('Error loading student list:', error);
+                showMessage('❌ Error loading student list', 'error');
+            }
+        }
+        
+        function displayStudentList(students) {
+            const container = document.getElementById('studentListTable');
+            container.innerHTML = students.map((student, index) => `
+                <div class="student-row" id="student-row-${index}">
+                    <div class="student-info">
+                        <div class="student-name">${student.studentName}</div>
+                        <div class="student-id">ID: ${student.studentId}</div>
+                    </div>
+                    <div class="attendance-actions">
+                        <button class="attendance-btn btn-present" onclick="markAttendance(${index}, 'present')" id="present-btn-${index}">
+                            Present
+                        </button>
+                        <button class="attendance-btn btn-absent" onclick="markAttendance(${index}, 'absent')" id="absent-btn-${index}">
+                            Absent
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function markAttendance(index, status) {
+            attendanceData.students[index].status = status;
+            
+            const row = document.getElementById(`student-row-${index}`);
+            const presentBtn = document.getElementById(`present-btn-${index}`);
+            const absentBtn = document.getElementById(`absent-btn-${index}`);
+            
+            if (status === 'present') {
+                row.classList.add('present');
+                row.classList.remove('absent');
+                presentBtn.classList.add('active');
+                absentBtn.classList.remove('active');
+            } else {
+                row.classList.add('absent');
+                row.classList.remove('present');
+                presentBtn.classList.remove('active');
+                absentBtn.classList.add('active');
+            }
+        }
+        
+        function markAllPresent() {
+            attendanceData.students.forEach((student, index) => {
+                markAttendance(index, 'present');
+            });
+            showMessage('✅ All students marked present', 'success');
+        }
+        
+        function markAllAbsent() {
+            attendanceData.students.forEach((student, index) => {
+                markAttendance(index, 'absent');
+            });
+            showMessage('❌ All students marked absent', 'error');
+        }
+        
+        
+        async function submitAttendance() {
+            // Validate that all students are marked
+            const unmarkedStudents = attendanceData.students.filter(s => !s.status);
+            if (unmarkedStudents.length > 0) {
+                if (!confirm(`${unmarkedStudents.length} student(s) are not marked. Do you want to continue?`)) {
+                    return;
+                }
+                // Mark unmarked students as absent
+                unmarkedStudents.forEach(s => s.status = 'absent');
+            }
+            
+            const submitBtn = document.getElementById('submitAttendanceBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Submitting...';
+            
+            try {
+                const attendanceRecords = attendanceData.students.map(s => ({
+                    studentEmail: s.studentEmail,
+                    studentId: s.studentId,
+                    studentName: s.studentName,
+                    status: s.status || 'absent'
+                }));
+                
+                const payload = {
+                    date: attendanceData.selectedDate,
+                    sessionId: attendanceData.selectedSession,
+                    branchId: attendanceData.selectedBranch,
+                    semester: parseInt(attendanceData.selectedSemester),
+                    periodId: attendanceData.selectedPeriod,
+                    subjectId: attendanceData.selectedSubject,
+                    classNotConducted: false,
+                    attendance: attendanceRecords,
+                    markedBy: currentUser.email
+                };
+                
+                const res = await fetch('/api/attendance/mark-attendance', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify(payload)
+                });
+                
+                const data = await res.json();
+                
+                if (data.success) {
+                    showMessage('✅ Attendance submitted successfully!', 'success');
+                    // Reset form
+                    setTimeout(() => {
+                        cancelAttendance();
+                    }, 1500);
+                } else {
+                    showMessage('❌ ' + (data.error || 'Failed to submit attendance'), 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '💾 Submit Attendance';
+                }
+            } catch (error) {
+                console.error('Error submitting attendance:', error);
+                showMessage('❌ Error submitting attendance', 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = '💾 Submit Attendance';
+            }
+        }
+        
+        function cancelAttendance() {
+            // Reset form
+            document.getElementById('attendanceSession').value = '';
+            document.getElementById('attendanceBranch').value = '';
+            document.getElementById('attendanceSemester').value = '';
+            document.getElementById('attendancePeriod').value = '';
+            document.getElementById('attendanceSubject').value = '';
+            document.getElementById('studentListContainer').style.display = 'none';
+            attendanceData.students = [];
+        }
+        
+        // Load my attendance records
+        async function loadMyAttendanceRecords() {
+            const filterDate = document.getElementById('filterRecordDate').value;
+            
+            try {
+                let url = `/api/attendance/records?markedBy=${encodeURIComponent(currentUser.email)}`;
+                if (filterDate) {
+                    url += `&date=${filterDate}`;
+                }
+                
+                const res = await fetch(url, { credentials: 'include' });
+                const data = await res.json();
+                
+                if (data.success) {
+                    displayMyAttendanceRecords(data.records);
+                } else {
+                    showMessage('❌ Failed to load records', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading attendance records:', error);
+                showMessage('❌ Error loading records', 'error');
+            }
+        }
+        
+        function displayMyAttendanceRecords(records) {
+            const container = document.getElementById('myAttendanceRecords');
+            
+            if (!records || records.length === 0) {
+                container.innerHTML = '<div class="text-center" style="padding: 2rem; color: #999;">No attendance records found</div>';
+                return;
+            }
+            
+            container.innerHTML = `
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: #f8f9fa; border-bottom: 2px solid #00b894;">
+                            <th style="padding: 10px; text-align: left;">Date</th>
+                            <th style="padding: 10px; text-align: left;">Session</th>
+                            <th style="padding: 10px; text-align: left;">Branch</th>
+                            <th style="padding: 10px; text-align: center;">Sem</th>
+                            <th style="padding: 10px; text-align: left;">Period</th>
+                            <th style="padding: 10px; text-align: left;">Subject</th>
+                            <th style="padding: 10px; text-align: center;">Present/Total</th>
+                            <th style="padding: 10px; text-align: center;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${records.map(r => `
+                            <tr style="border-bottom: 1px solid #e9ecef;">
+                                <td style="padding: 10px;">${r.date}</td>
+                                <td style="padding: 10px;">${r.sessionId}</td>
+                                <td style="padding: 10px;">${r.branchId}</td>
+                                <td style="padding: 10px; text-align: center;">${r.semester}</td>
+                                <td style="padding: 10px;">${r.periodId}</td>
+                                <td style="padding: 10px; font-size: 13px;">${r.subjectId}</td>
+                                <td style="padding: 10px; text-align: center;">
+                                    ${r.classNotConducted ? '<span style="color: #999;">N/A</span>' : `<strong>${r.presentCount}/${r.totalStudents}</strong>`}
+                                </td>
+                                <td style="padding: 10px; text-align: center;">
+                                    ${r.classNotConducted ? '<span class="badge badge-warning">Not Conducted</span>' : '<span class="badge badge-success">Conducted</span>'}
+                                    ${r.canEdit ? '<br><span class="badge badge-info" style="margin-top: 4px;">Editable (24h)</span>' : '<br><span class="badge badge-secondary" style="margin-top: 4px;">Locked</span>'}
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+        
+        // Initialize attendance on section change
+        const originalShowSection = showSection;
+        showSection = function(sectionId) {
+            originalShowSection(sectionId);
+            if (sectionId === 'attendance') {
+                loadAttendanceConfiguration();
+            } else if (sectionId === 'reports') {
+                loadReportsConfiguration();
+            }
+        };
+        
+        // ========================================================================
+        // ATTENDANCE REPORTS FUNCTIONS
+        // ========================================================================
+        
+        let reportsData = {
+            sessions: [],
+            branches: [],
+            subjects: []
+        };
+        
+        // Load reports configuration
+        async function loadReportsConfiguration() {
+            try {
+                // Load sessions
+                const sessionsRes = await fetch('/api/attendance/sessions', { credentials: 'include' });
+                const sessionsData = await sessionsRes.json();
+                if (sessionsData.success) {
+                    reportsData.sessions = sessionsData.sessions;
+                    const select = document.getElementById('reportSession');
+                    select.innerHTML = '<option value="">Select Session</option>' +
+                        sessionsData.sessions.map(s => `<option value="${s.id}">${s.name || s.id}</option>`).join('');
+                }
+                
+                // Load branches
+                const branchesRes = await fetch('/api/attendance/branches', { credentials: 'include' });
+                const branchesData = await branchesRes.json();
+                if (branchesData.success) {
+                    reportsData.branches = branchesData.branches;
+                    const select = document.getElementById('reportBranch');
+                    select.innerHTML = '<option value="">Select Branch</option>' +
+                        branchesData.branches.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
+                }
+                
+                // Set default date range (last 7 days)
+                const today = new Date();
+                const sevenDaysAgo = new Date(today);
+                sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+                
+                document.getElementById('reportToDate').value = today.toISOString().split('T')[0];
+                document.getElementById('reportFromDate').value = sevenDaysAgo.toISOString().split('T')[0];
+                
+            } catch (error) {
+                console.error('Error loading reports configuration:', error);
+            }
+        }
+        
+        // Load subjects when session/branch/semester changes
+        document.getElementById('reportSession')?.addEventListener('change', loadReportSubjects);
+        document.getElementById('reportBranch')?.addEventListener('change', loadReportSubjects);
+        document.getElementById('reportSemester')?.addEventListener('change', loadReportSubjects);
+        
+        async function loadReportSubjects() {
+            const session = document.getElementById('reportSession').value;
+            const branch = document.getElementById('reportBranch').value;
+            const semester = document.getElementById('reportSemester').value;
+            
+            if (!session || !branch || !semester) return;
+            
+            try {
+                const res = await fetch(`/api/attendance/subjects?sessionId=${session}&branchId=${branch}&semester=${semester}`, {
+                    credentials: 'include'
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    const select = document.getElementById('reportSubject');
+                    select.innerHTML = '<option value="">Select Subject</option>' +
+                        data.subjects.map(s => `<option value="${s.id}">${s.subjectName} (${s.subjectCode})</option>`).join('');
+                }
+            } catch (error) {
+                console.error('Error loading subjects:', error);
+            }
+        }
+        
+        // Generate attendance report
+        async function generateAttendanceReport() {
+            const session = document.getElementById('reportSession').value;
+            const branch = document.getElementById('reportBranch').value;
+            const semester = document.getElementById('reportSemester').value;
+            const subject = document.getElementById('reportSubject').value;
+            const fromDate = document.getElementById('reportFromDate').value;
+            const toDate = document.getElementById('reportToDate').value;
+            
+            if (!session || !branch || !semester || !subject || !fromDate || !toDate) {
+                showMessage('⚠️ Please fill all fields', 'error');
+                return;
+            }
+            
+            const generateBtn = document.getElementById('generateReportBtn');
+            generateBtn.disabled = true;
+            generateBtn.textContent = '⏳ Generating...';
+            
+            try {
+                // Fetch students
+                const studentsRes = await fetch(
+                    `/api/attendance/student-list?sessionId=${session}&branchId=${branch}&semester=${semester}`,
+                    { credentials: 'include' }
+                );
+                const studentsData = await studentsRes.json();
+                
+                if (!studentsData.success || studentsData.students.length === 0) {
+                    showMessage('⚠️ No students found', 'error');
+                    generateBtn.disabled = false;
+                    generateBtn.textContent = 'GENERATE REPORT';
+                    return;
+                }
+                
+                // Fetch attendance records
+                const recordsRes = await fetch(
+                    `/api/attendance/records?sessionId=${session}&branchId=${branch}&semester=${semester}&subjectId=${subject}&fromDate=${fromDate}&toDate=${toDate}`,
+                    { credentials: 'include' }
+                );
+                const recordsData = await recordsRes.json();
+                
+                if (!recordsData.success) {
+                    showMessage('❌ Failed to fetch attendance records', 'error');
+                    generateBtn.disabled = false;
+                    generateBtn.textContent = 'GENERATE REPORT';
+                    return;
+                }
+                
+                // Display the report
+                displayAttendanceReport(studentsData.students, recordsData.records, {
+                    session, branch, semester, subject, fromDate, toDate
+                });
+                
+                generateBtn.disabled = false;
+                generateBtn.textContent = 'GENERATE REPORT';
+                
+            } catch (error) {
+                console.error('Error generating report:', error);
+                showMessage('❌ Error generating report', 'error');
+                generateBtn.disabled = false;
+                generateBtn.textContent = 'GENERATE REPORT';
+            }
+        }
+        
+        function displayAttendanceReport(students, records, filters) {
+            // Group records by date and period
+            const dateMap = {};
+            const periodSet = new Set();
+            
+            records.forEach(record => {
+                if (!dateMap[record.date]) {
+                    dateMap[record.date] = {};
+                }
+                dateMap[record.date][record.periodId] = record;
+                periodSet.add(record.periodId);
+            });
+            
+            // Sort dates
+            const dates = Object.keys(dateMap).sort();
+            const periods = Array.from(periodSet).sort();
+            
+            // Format date for display
+            const formatDate = (dateStr) => {
+                const date = new Date(dateStr);
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = String(date.getFullYear()).slice(2);
+                return `${day}-${month}-${year}`;
+            };
+            
+            // Get branch name
+            const branchObj = reportsData.branches.find(b => b.id === filters.branch);
+            const branchName = branchObj ? branchObj.name : filters.branch;
+            
+            // Update title
+            document.getElementById('reportTitle').textContent = `📅 Attendance Report (${formatDate(filters.fromDate)} to ${formatDate(filters.toDate)})`;
+            
+            // Update summary
+            const sessionInfo = filters.session;
+            const semesterInfo = `Semester-${filters.semester}`;
+            document.getElementById('reportSummary').innerHTML = `
+                <strong>${sessionInfo}</strong> | ${branchName} | ${semesterInfo}
+            `;
+            
+            // Build table
+            let tableHTML = '<table class="last-7-days-table">';
+            
+            // Header row 1: Dates
+            tableHTML += '<thead><tr><th rowspan="2" style="min-width: 200px;">Student Info</th>';
+            dates.forEach(date => {
+                tableHTML += `<th colspan="${periods.length}">${formatDate(date)}</th>`;
+            });
+            tableHTML += '</tr>';
+            
+            // Header row 2: Periods
+            tableHTML += '<tr>';
+            dates.forEach(() => {
+                periods.forEach(periodId => {
+                    const periodNum = periodId.replace('P', '');
+                    tableHTML += `<th style="padding: 0.5rem;">${periodNum}</th>`;
+                });
+            });
+            tableHTML += '</tr></thead>';
+            
+            // Body: Students
+            tableHTML += '<tbody>';
+            students.forEach(student => {
+                tableHTML += `<tr>`;
+                tableHTML += `<td style="text-align: left; padding: 1rem;"><strong>${student.studentId} - ${student.studentName}</strong></td>`;
+                
+                dates.forEach(date => {
+                    periods.forEach(periodId => {
+                        const record = dateMap[date]?.[periodId];
+                        if (record) {
+                            const studentAttendance = record.attendance.find(a => a.studentEmail === student.studentEmail);
+                            if (studentAttendance) {
+                                const periodNum = periodId.replace('P', '');
+                                const circleClass = studentAttendance.status === 'present' ? 'period-circle-present' : 'period-circle-absent';
+                                tableHTML += `<td><div class="period-circle-small ${circleClass}">${periodNum}</div></td>`;
+                            } else {
+                                tableHTML += `<td><div class="period-circle-small period-circle-not-marked">-</div></td>`;
+                            }
+                        } else {
+                            tableHTML += `<td><div class="period-circle-small period-circle-not-marked">-</div></td>`;
+                        }
+                    });
+                });
+                
+                tableHTML += '</tr>';
+            });
+            tableHTML += '</tbody></table>';
+            
+            document.getElementById('reportTableContainer').innerHTML = tableHTML;
+            document.getElementById('reportContainer').style.display = 'block';
+        }
+        
+    </script>
+</body>
+</html>

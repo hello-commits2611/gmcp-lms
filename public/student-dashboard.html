@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - GMCP LMS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-info h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .user-info p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-light {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .btn-light:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+        }
+
+        .icon-assignments {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .icon-grades {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        .icon-attendance {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+        }
+
+        .icon-profile {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+
+        .section {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .assignments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .assignment-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .assignment-info h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .assignment-meta {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .due-date {
+            font-size: 14px;
+            font-weight: 500;
+            color: #dc3545;
+        }
+
+        .due-date.upcoming {
+            color: #ffc107;
+        }
+
+        .due-date.overdue {
+            color: #dc3545;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-submitted {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-graded {
+            background: #cce5ff;
+            color: #0066cc;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+            display: block;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .assignment-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="user-info">
+                <h1 id="studentName">Welcome, Student</h1>
+                <p id="studentDetails">Loading...</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-light" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="dashboard-grid">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Pending Assignments</div>
+                        <div class="stat-number" id="pendingAssignments">-</div>
+                        <div class="stat-label">Due this week</div>
+                    </div>
+                    <div class="card-icon icon-assignments">📝</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Attendance</div>
+                        <div class="stat-number" id="attendancePercentage">-%</div>
+                        <div class="stat-label">Current semester</div>
+                    </div>
+                    <div class="card-icon icon-attendance">📊</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="attendanceProgress" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Current GPA</div>
+                        <div class="stat-number" id="currentGPA">-.--</div>
+                        <div class="stat-label">This semester</div>
+                    </div>
+                    <div class="card-icon icon-grades">🎓</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Profile Status</div>
+                        <div class="stat-number" id="profileStatus">✓</div>
+                        <div class="stat-label">Complete</div>
+                    </div>
+                    <div class="card-icon icon-profile">👤</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Recent Assignments</h2>
+            <div id="assignmentsList" class="assignments-list">
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Quick Actions</h2>
+            <div class="quick-actions">
+                <a href="#" class="action-btn" onclick="viewAllAssignments()">View All Assignments</a>
+                <a href="#" class="action-btn" onclick="viewGrades()">Check Grades</a>
+                <a href="#" class="action-btn" onclick="viewAttendance()">Attendance Report</a>
+                <a href="#" class="action-btn" onclick="updateProfile()">Update Profile</a>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { authFunctions, dbFunctions, USER_ROLES } from './firebase-config.js';
+
+        let currentUser = null;
+
+        // Check authentication on page load
+        authFunctions.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            try {
+                const userData = JSON.parse(localStorage.getItem('currentUser'));
+                if (!userData || userData.role !== USER_ROLES.STUDENT) {
+                    alert('Access denied. Student access required.');
+                    window.location.href = 'index.html';
+                    return;
+                }
+                
+                currentUser = userData;
+                await loadDashboardData();
+            } catch (error) {
+                console.error('Authentication check failed:', error);
+                window.location.href = 'index.html';
+            }
+        });
+
+        // Load dashboard data
+        async function loadDashboardData() {
+            try {
+                // Update student info in header
+                document.getElementById('studentName').textContent = `Welcome, ${currentUser.name}`;
+                
+                const studentData = currentUser.studentData || {};
+                document.getElementById('studentDetails').textContent = 
+                    `${studentData.branch || 'N/A'} - Year ${studentData.year || 'N/A'} | Roll No: ${studentData.rollNumber || 'N/A'}`;
+
+                // Load assignments
+                await loadAssignments();
+                
+                // Load attendance data
+                await loadAttendance();
+                
+                // Load grades data
+                await loadGrades();
+
+            } catch (error) {
+                console.error('Failed to load dashboard data:', error);
+                showError('Failed to load dashboard data');
+            }
+        }
+
+        // Load assignments
+        async function loadAssignments() {
+            try {
+                // For demo purposes, using mock data
+                // In real implementation, fetch from Firestore
+                const mockAssignments = [
+                    {
+                        id: '1',
+                        title: 'Data Structures Assignment 3',
+                        subject: 'Computer Science',
+                        dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // 2 days from now
+                        status: 'pending',
+                        description: 'Implement binary search tree operations'
+                    },
+                    {
+                        id: '2',
+                        title: 'Mathematics Quiz 2',
+                        subject: 'Mathematics',
+                        dueDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 days from now
+                        status: 'pending',
+                        description: 'Linear algebra problems'
+                    },
+                    {
+                        id: '3',
+                        title: 'Physics Lab Report',
+                        subject: 'Physics',
+                        dueDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
+                        status: 'submitted',
+                        description: 'Optics experiment analysis'
+                    }
+                ];
+
+                displayAssignments(mockAssignments);
+                updateAssignmentStats(mockAssignments);
+
+            } catch (error) {
+                console.error('Failed to load assignments:', error);
+                document.getElementById('assignmentsList').innerHTML = 
+                    '<div style="text-align: center; color: #dc3545;">Failed to load assignments</div>';
+            }
+        }
+
+        // Display assignments
+        function displayAssignments(assignments) {
+            const container = document.getElementById('assignmentsList');
+            
+            if (assignments.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: #666;">No assignments found</div>';
+                return;
+            }
+
+            container.innerHTML = assignments.map(assignment => {
+                const dueDate = new Date(assignment.dueDate);
+                const now = new Date();
+                const daysUntilDue = Math.ceil((dueDate - now) / (1000 * 60 * 60 * 24));
+                
+                let dueDateClass = '';
+                let dueDateText = '';
+                
+                if (daysUntilDue < 0) {
+                    dueDateClass = 'overdue';
+                    dueDateText = `${Math.abs(daysUntilDue)} days overdue`;
+                } else if (daysUntilDue <= 3) {
+                    dueDateClass = 'upcoming';
+                    dueDateText = `Due in ${daysUntilDue} days`;
+                } else {
+                    dueDateText = `Due ${dueDate.toLocaleDateString()}`;
+                }
+
+                return `
+                    <div class="assignment-item">
+                        <div class="assignment-info">
+                            <h4>${assignment.title}</h4>
+                            <div class="assignment-meta">
+                                ${assignment.subject} • ${assignment.description}
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="due-date ${dueDateClass}">${dueDateText}</div>
+                            <span class="status-badge status-${assignment.status}">${assignment.status}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Update assignment statistics
+        function updateAssignmentStats(assignments) {
+            const pending = assignments.filter(a => a.status === 'pending').length;
+            document.getElementById('pendingAssignments').textContent = pending;
+        }
+
+        // Load attendance data
+        async function loadAttendance() {
+            try {
+                // Mock attendance data
+                const attendancePercentage = 85;
+                document.getElementById('attendancePercentage').textContent = `${attendancePercentage}%`;
+                document.getElementById('attendanceProgress').style.width = `${attendancePercentage}%`;
+            } catch (error) {
+                console.error('Failed to load attendance:', error);
+            }
+        }
+
+        // Load grades data
+        async function loadGrades() {
+            try {
+                // Mock GPA data
+                const gpa = 8.2;
+                document.getElementById('currentGPA').textContent = gpa.toFixed(2);
+            } catch (error) {
+                console.error('Failed to load grades:', error);
+            }
+        }
+
+        // Quick action functions
+        window.viewAllAssignments = function() {
+            alert('View All Assignments feature will be implemented here.');
+        };
+
+        window.viewGrades = function() {
+            alert('View Grades feature will be implemented here.');
+        };
+
+        window.viewAttendance = function() {
+            alert('View Attendance feature will be implemented here.');
+        };
+
+        window.updateProfile = function() {
+            alert('Update Profile feature will be implemented here.');
+        };
+
+        // Show error message
+        function showError(message) {
+            alert(message);
+        }
+
+        // Logout
+        window.logout = async function() {
+            try {
+                await authFunctions.signOut();
+                localStorage.removeItem('currentUser');
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error('Logout error:', error);
+                alert('Failed to logout. Please try again.');
+            }
+        };
+    </script>
+</body>
+</html>
