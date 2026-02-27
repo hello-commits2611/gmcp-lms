@@ -24,13 +24,7 @@ router.get('/', async (req, res) => {
       query = query.where('type', '==', type);
     }
     
-    // Add ordering if no filters are applied (to avoid composite index requirements)
-    // When filters are present, results will be sorted in-memory
-    const hasFilters = semester || branch || status || type;
-    if (!hasFilters) {
-      query = query.orderBy('semester').orderBy('code');
-    }
-    
+    // Get all matching documents
     const snapshot = await query.get();
     const subjects = [];
     
@@ -41,15 +35,13 @@ router.get('/', async (req, res) => {
       });
     });
     
-    // Sort in-memory if filters were applied
-    if (hasFilters) {
-      subjects.sort((a, b) => {
-        if (a.semester !== b.semester) {
-          return a.semester - b.semester;
-        }
-        return a.code.localeCompare(b.code);
-      });
-    }
+    // Always sort in-memory to avoid Firestore composite index requirements
+    subjects.sort((a, b) => {
+      if (a.semester !== b.semester) {
+        return a.semester - b.semester;
+      }
+      return (a.code || '').localeCompare(b.code || '');
+    });
     
     res.json({
       success: true,
