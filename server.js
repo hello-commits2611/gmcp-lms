@@ -132,6 +132,16 @@ app.use((req, res, next) => {
   next();
 });
 
+// Disable caching for HTML files to ensure users get latest version
+app.use((req, res, next) => {
+  if (req.path.endsWith('.html')) {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+  }
+  next();
+});
+
 // Serve static files from public directory
 app.use(express.static(path.join(__dirname, 'public')));
 
