@@ -1,0 +1,62 @@
+{
+  "parineeta@gmcpnalanda.com_2025-2028_CE_2_CE_2025_2_CE201": {
+    "id": "parineeta@gmcpnalanda.com_2025-2028_CE_2_CE_2025_2_CE201",
+    "studentEmail": "parineeta@gmcpnalanda.com",
+    "studentId": "252611",
+    "studentName": "Uttchrist Sinha",
+    "sessionId": "2025-2028",
+    "branchId": "CE",
+    "semester": 2,
+    "subjectId": "CE_2025_2_CE201",
+    "totalConducted": 18,
+    "totalPresent": 15,
+    "totalAbsent": 3,
+    "percentage": "83.33",
+    "lastUpdated": "2026-01-27T17:02:47.596Z"
+  },
+  "ganesh@gmcpnalanda.com_2025-2028_CE_2_CE_2025_2_CE201": {
+    "id": "ganesh@gmcpnalanda.com_2025-2028_CE_2_CE_2025_2_CE201",
+    "studentEmail": "ganesh@gmcpnalanda.com",
+    "studentId": "54321",
+    "studentName": "GANESH KUMAR",
+    "sessionId": "2025-2028",
+    "branchId": "CE",
+    "semester": 2,
+    "subjectId": "CE_2025_2_CE201",
+    "totalConducted": 17,
+    "totalPresent": 8,
+    "totalAbsent": 9,
+    "percentage": "47.06",
+    "lastUpdated": "2026-01-27T17:02:47.596Z"
+  },
+  "mohan@gmcpnalanda.com_2025-2028_CE_2_CE_2025_2_CE201": {
+    "id": "mohan@gmcpnalanda.com_2025-2028_CE_2_CE_2025_2_CE201",
+    "studentEmail": "mohan@gmcpnalanda.com",
+    "studentId": "296754",
+    "studentName": "Mohan kumar",
+    "sessionId": "2025-2028",
+    "branchId": "CE",
+    "semester": 2,
+    "subjectId": "CE_2025_2_CE201",
+    "totalConducted": 17,
+    "totalPresent": 10,
+    "totalAbsent": 7,
+    "percentage": "58.82",
+    "lastUpdated": "2026-01-27T17:02:47.596Z"
+  },
+  "richa@gmcpnalanda.com_2025-2028_CE_2_CE_2025_2_CE201": {
+    "id": "richa@gmcpnalanda.com_2025-2028_CE_2_CE_2025_2_CE201",
+    "studentEmail": "richa@gmcpnalanda.com",
+    "studentId": "956734",
+    "studentName": "ANVESH KUMAR",
+    "sessionId": "2025-2028",
+    "branchId": "CE",
+    "semester": 2,
+    "subjectId": "CE_2025_2_CE201",
+    "totalConducted": 17,
+    "totalPresent": 5,
+    "totalAbsent": 12,
+    "percentage": "29.41",
+    "lastUpdated": "2026-01-27T17:02:47.596Z"
+  }
+}

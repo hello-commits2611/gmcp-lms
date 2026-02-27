@@ -15,7 +15,7 @@ npm-debug.log*
 # Uploads and data
 uploads/*
 !uploads/.gitkeep
-data/
+# Note: data/ is NOT ignored so initial config files are committed
 data-backup/
 data-backup-*/
 

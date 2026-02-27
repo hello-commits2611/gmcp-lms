@@ -1,0 +1,576 @@
+{
+  "2026-01-07_2025-2028_CE_2_P1_CE_2025_2_CE201": {
+    "id": "2026-01-07_2025-2028_CE_2_P1_CE_2025_2_CE201",
+    "date": "2026-01-07",
+    "sessionId": "2025-2028",
+    "branchId": "CE",
+    "semester": 2,
+    "periodId": "P1",
+    "subjectId": "CE_2025_2_CE201",
+    "classNotConducted": false,
+    "attendance": [
+      {
+        "studentEmail": "parineeta@gmcpnalanda.com",
+        "studentId": "252611",
+        "studentName": "Uttchrist Sinha",
+        "status": "present"
+      },
+      {
+        "studentEmail": "ganesh@gmcpnalanda.com",
+        "studentId": "54321",
+        "studentName": "GANESH KUMAR",
+        "status": "present"
+      },
+      {
+        "studentEmail": "mohan@gmcpnalanda.com",
+        "studentId": "296754",
+        "studentName": "Mohan kumar",
+        "status": "present"
+      },
+      {
+        "studentEmail": "richa@gmcpnalanda.com",
+        "studentId": "956734",
+        "studentName": "ANVESH KUMAR",
+        "status": "present"
+      }
+    ],
+    "totalStudents": 4,
+    "presentCount": 4,
+    "absentCount": 0,
+    "markedBy": "mukesh@gmcpnalanda.com",
+    "markedAt": "2026-01-08T17:57:38.591Z",
+    "editUntil": "2026-01-09T17:57:38.591Z",
+    "canEdit": true,
+    "status": "submitted"
+  },
+  "2026-01-09_2025-2028_CE_2_P1_CE_2025_2_CE201": {
+    "id": "2026-01-09_2025-2028_CE_2_P1_CE_2025_2_CE201",
+    "date": "2026-01-09",
+    "sessionId": "2025-2028",
+    "branchId": "CE",
+    "semester": 2,
+    "periodId": "P1",
+    "subjectId": "CE_2025_2_CE201",
+    "classNotConducted": false,
+    "attendance": [
+      {
+        "studentEmail": "parineeta@gmcpnalanda.com",
+        "studentId": "252611",
+        "studentName": "Uttchrist Sinha",
+        "status": "present"
+      },
+      {
+        "studentEmail": "ganesh@gmcpnalanda.com",
+        "studentId": "54321",
+        "studentName": "GANESH KUMAR",
+        "status": "absent"
+      },
+      {
+        "studentEmail": "mohan@gmcpnalanda.com",
+        "studentId": "296754",
+        "studentName": "Mohan kumar",
+        "status": "present"
+      },
+      {
+        "studentEmail": "richa@gmcpnalanda.com",
+        "studentId": "956734",
+        "studentName": "ANVESH KUMAR",
+        "status": "absent"
+      }
+    ],
+    "totalStudents": 4,
+    "presentCount": 2,
+    "absentCount": 2,
+    "markedBy": "mukesh@gmcpnalanda.com",
+    "markedAt": "2026-01-09T12:45:10.178Z",
+    "editUntil": "2026-01-10T12:45:10.178Z",
+    "canEdit": true,
+    "status": "submitted"
+  },
+  "2026-01-10_2025-2028_CE_2_P2_CE_2025_2_CE201": {
+    "id": "2026-01-10_2025-2028_CE_2_P2_CE_2025_2_CE201",
+    "date": "2026-01-10",
+    "sessionId": "2025-2028",
+    "branchId": "CE",
+    "semester": 2,
+    "periodId": "P2",
+    "subjectId": "CE_2025_2_CE201",
+    "classNotConducted": false,
+    "attendance": [
+      {
+        "studentEmail": "parineeta@gmcpnalanda.com",
+        "studentId": "252611",
+        "studentName": "Uttchrist Sinha",
+        "status": "present"
+      },
+      {
+        "studentEmail": "ganesh@gmcpnalanda.com",
+        "studentId": "54321",
+        "studentName": "GANESH KUMAR",
+        "status": "present"
+      },
+      {
+        "studentEmail": "mohan@gmcpnalanda.com",
+        "studentId": "296754",
+        "studentName": "Mohan kumar",
+        "status": "active"
+      },
+      {
+        "studentEmail": "richa@gmcpnalanda.com",
+        "studentId": "956734",
+        "studentName": "ANVESH KUMAR",
+        "status": "active"
+      }
+    ],
+    "totalStudents": 4,
+    "presentCount": 2,
+    "absentCount": 0,
+    "markedBy": "mukesh@gmcpnalanda.com",
+    "markedAt": "2026-01-08T21:56:44.451Z",
+    "editUntil": "2026-01-09T21:56:44.451Z",
+    "canEdit": true,
+    "status": "submitted"
+  },
+  "2026-01-08_2025-2028_CE_2_P1_CE_2025_2_CE201": {
+    "id": "2026-01-08_2025-2028_CE_2_P1_CE_2025_2_CE201",
+    "date": "2026-01-08",
+    "sessionId": "2025-2028",
+    "branchId": "CE",
+    "semester": 2,
+    "periodId": "P1",
+    "subjectId": "CE_2025_2_CE201",
+    "classNotConducted": false,
+    "attendance": [
+      {
+        "studentEmail": "parineeta@gmcpnalanda.com",
+        "studentId": "252611",
+        "studentName": "Uttchrist Sinha",
+        "status": "present"
+      },
+      {
+        "studentEmail": "ganesh@gmcpnalanda.com",
+        "studentId": "54321",
+        "studentName": "GANESH KUMAR",
+        "status": "absent"
+      },
+      {
+        "studentEmail": "mohan@gmcpnalanda.com",
+        "studentId": "296754",
+        "studentName": "Mohan kumar",
+        "status": "present"
+      },
+      {
+        "studentEmail": "richa@gmcpnalanda.com",
+        "studentId": "956734",
+        "studentName": "ANVESH KUMAR",
+        "status": "absent"
+      }
+    ],
+    "totalStudents": 4,
+    "presentCount": 2,
+    "absentCount": 2,
+    "markedBy": "mukesh@gmcpnalanda.com",
+    "markedAt": "2026-01-08T22:21:40.593Z",
+    "editUntil": "2026-01-09T22:21:40.593Z",
+    "canEdit": true,
+    "status": "submitted"
+  },
+  "2026-01-08_2025-2028_CE_2_P3_CE_2025_2_CE201": {
+    "id": "2026-01-08_2025-2028_CE_2_P3_CE_2025_2_CE201",
+    "date": "2026-01-08",
+    "sessionId": "2025-2028",
+    "branchId": "CE",
+    "semester": 2,
+    "periodId": "P3",
+    "subjectId": "CE_2025_2_CE201",
+    "classNotConducted": false,
+    "attendance": [
+      {
+        "studentEmail": "parineeta@gmcpnalanda.com",
+        "studentId": "252611",
+        "studentName": "Uttchrist Sinha",
+        "status": "present"
+      },
+      {
+        "studentEmail": "ganesh@gmcpnalanda.com",
+        "studentId": "54321",
+        "studentName": "GANESH KUMAR",
+        "status": "present"
+      },
+      {
+        "studentEmail": "mohan@gmcpnalanda.com",
+        "studentId": "296754",
+        "studentName": "Mohan kumar",
+        "status": "present"
+      },
+      {
+        "studentEmail": "richa@gmcpnalanda.com",
+        "studentId": "956734",
+        "studentName": "ANVESH KUMAR",
+        "status": "present"
+      }
+    ],
+    "totalStudents": 4,
+    "presentCount": 4,
+    "absentCount": 0,
+    "markedBy": "mukesh@gmcpnalanda.com",
+    "markedAt": "2026-01-08T22:21:42.857Z",
+    "editUntil": "2026-01-09T22:21:42.857Z",
+    "canEdit": true,
+    "status": "submitted"
+  },
+  "2026-01-09_2025-2028_CE_2_P2_CE_2025_2_CE201": {
+    "id": "2026-01-09_2025-2028_CE_2_P2_CE_2025_2_CE201",
+    "date": "2026-01-09",
+    "sessionId": "2025-2028",
+    "branchId": "CE",
+    "semester": 2,
+    "periodId": "P2",
+    "subjectId": "CE_2025_2_CE201",
+    "classNotConducted": false,
+    "attendance": [
+      {
+        "studentEmail": "parineeta@gmcpnalanda.com",
+        "studentId": "252611",
+        "studentName": "Uttchrist Sinha",
+        "status": "absent"
+      },
+      {
+        "studentEmail": "ganesh@gmcpnalanda.com",
+        "studentId": "54321",
+        "studentName": "GANESH KUMAR",
+        "status": "absent"
+      },
+      {
+        "studentEmail": "mohan@gmcpnalanda.com",
+        "studentId": "296754",
+        "studentName": "Mohan kumar",
+        "status": "present"
+      },
+      {
+        "studentEmail": "richa@gmcpnalanda.com",
+        "studentId": "956734",
+        "studentName": "ANVESH KUMAR",
+        "status": "present"
+      }
+    ],
+    "totalStudents": 4,
+    "presentCount": 2,
+    "absentCount": 2,
+    "markedBy": "mukesh@gmcpnalanda.com",
+    "markedAt": "2026-01-09T12:46:27.234Z",
+    "editUntil": "2026-01-10T12:46:27.234Z",
+    "canEdit": true,
+    "status": "submitted"
+  },
+  "2026-01-09_2025-2028_CE_2_P3_CE_2025_2_CE201": {
+    "id": "2026-01-09_2025-2028_CE_2_P3_CE_2025_2_CE201",
+    "date": "2026-01-09",
+    "sessionId": "2025-2028",
+    "branchId": "CE",
+    "semester": 2,
+    "periodId": "P3",
+    "subjectId": "CE_2025_2_CE201",
+    "classNotConducted": false,
+    "attendance": [
+      {
+        "studentEmail": "parineeta@gmcpnalanda.com",
+        "studentId": "252611",
+        "studentName": "Uttchrist Sinha",
+        "status": "present"
+      },
+      {
+        "studentEmail": "ganesh@gmcpnalanda.com",
+        "studentId": "54321",
+        "studentName": "GANESH KUMAR",
+        "status": "absent"
+      },
+      {
+        "studentEmail": "mohan@gmcpnalanda.com",
+        "studentId": "296754",
+        "studentName": "Mohan kumar",
+        "status": "absent"
+      },
+      {
+        "studentEmail": "richa@gmcpnalanda.com",
+        "studentId": "956734",
+        "studentName": "ANVESH KUMAR",
+        "status": "absent"
+      }
+    ],
+    "totalStudents": 4,
+    "presentCount": 1,
+    "absentCount": 3,
+    "markedBy": "mukesh@gmcpnalanda.com",
+    "markedAt": "2026-01-09T12:47:12.608Z",
+    "editUntil": "2026-01-10T12:47:12.608Z",
+    "canEdit": true,
+    "status": "submitted"
+  },
+  "2026-01-09_2025-2028_CE_2_P4_CE_2025_2_CE201": {
+    "id": "2026-01-09_2025-2028_CE_2_P4_CE_2025_2_CE201",
+    "date": "2026-01-09",
+    "sessionId": "2025-2028",
+    "branchId": "CE",
+    "semester": 2,
+    "periodId": "P4",
+    "subjectId": "CE_2025_2_CE201",
+    "classNotConducted": false,
+    "attendance": [
+      {
+        "studentEmail": "parineeta@gmcpnalanda.com",
+        "studentId": "252611",
+        "studentName": "Uttchrist Sinha",
+        "status": "present"
+      },
+      {
+        "studentEmail": "ganesh@gmcpnalanda.com",
+        "studentId": "54321",
+        "studentName": "GANESH KUMAR",
+        "status": "absent"
+      },
+      {
+        "studentEmail": "mohan@gmcpnalanda.com",
+        "studentId": "296754",
+        "studentName": "Mohan kumar",
+        "status": "absent"
+      },
+      {
+        "studentEmail": "richa@gmcpnalanda.com",
+        "studentId": "956734",
+        "studentName": "ANVESH KUMAR",
+        "status": "absent"
+      }
+    ],
+    "totalStudents": 4,
+    "presentCount": 1,
+    "absentCount": 3,
+    "markedBy": "mukesh@gmcpnalanda.com",
+    "markedAt": "2026-01-09T14:51:15.351Z",
+    "editUntil": "2026-01-10T14:51:15.351Z",
+    "canEdit": true,
+    "status": "submitted"
+  },
+  "2026-01-09_2025-2028_CE_2_P5_CE_2025_2_CE201": {
+    "id": "2026-01-09_2025-2028_CE_2_P5_CE_2025_2_CE201",
+    "date": "2026-01-09",
+    "sessionId": "2025-2028",
+    "branchId": "CE",
+    "semester": 2,
+    "periodId": "P5",
+    "subjectId": "CE_2025_2_CE201",
+    "classNotConducted": false,
+    "attendance": [
+      {
+        "studentEmail": "parineeta@gmcpnalanda.com",
+        "studentId": "252611",
+        "studentName": "Uttchrist Sinha",
+        "status": "absent"
+      },
+      {
+        "studentEmail": "ganesh@gmcpnalanda.com",
+        "studentId": "54321",
+        "studentName": "GANESH KUMAR",
+        "status": "absent"
+      },
+      {
+        "studentEmail": "mohan@gmcpnalanda.com",
+        "studentId": "296754",
+        "studentName": "Mohan kumar",
+        "status": "present"
+      },
+      {
+        "studentEmail": "richa@gmcpnalanda.com",
+        "studentId": "956734",
+        "studentName": "ANVESH KUMAR",
+        "status": "absent"
+      }
+    ],
+    "totalStudents": 4,
+    "presentCount": 1,
+    "absentCount": 3,
+    "markedBy": "mukesh@gmcpnalanda.com",
+    "markedAt": "2026-01-09T14:51:41.182Z",
+    "editUntil": "2026-01-10T14:51:41.182Z",
+    "canEdit": true,
+    "status": "submitted"
+  },
+  "2026-01-09_2025-2028_CE_2_P6_CE_2025_2_CE201": {
+    "id": "2026-01-09_2025-2028_CE_2_P6_CE_2025_2_CE201",
+    "date": "2026-01-09",
+    "sessionId": "2025-2028",
+    "branchId": "CE",
+    "semester": 2,
+    "periodId": "P6",
+    "subjectId": "CE_2025_2_CE201",
+    "classNotConducted": false,
+    "attendance": [
+      {
+        "studentEmail": "parineeta@gmcpnalanda.com",
+        "studentId": "252611",
+        "studentName": "Uttchrist Sinha",
+        "status": "present"
+      },
+      {
+        "studentEmail": "ganesh@gmcpnalanda.com",
+        "studentId": "54321",
+        "studentName": "GANESH KUMAR",
+        "status": "absent"
+      },
+      {
+        "studentEmail": "mohan@gmcpnalanda.com",
+        "studentId": "296754",
+        "studentName": "Mohan kumar",
+        "status": "absent"
+      },
+      {
+        "studentEmail": "richa@gmcpnalanda.com",
+        "studentId": "956734",
+        "studentName": "ANVESH KUMAR",
+        "status": "absent"
+      }
+    ],
+    "totalStudents": 4,
+    "presentCount": 1,
+    "absentCount": 3,
+    "markedBy": "mukesh@gmcpnalanda.com",
+    "markedAt": "2026-01-09T14:52:30.462Z",
+    "editUntil": "2026-01-10T14:52:30.462Z",
+    "canEdit": true,
+    "status": "submitted"
+  },
+  "2026-01-15_2025-2028_CE_2_P1_CE_2025_2_CE201": {
+    "id": "2026-01-15_2025-2028_CE_2_P1_CE_2025_2_CE201",
+    "date": "2026-01-15",
+    "sessionId": "2025-2028",
+    "branchId": "CE",
+    "semester": 2,
+    "periodId": "P1",
+    "subjectId": "CE_2025_2_CE201",
+    "classNotConducted": false,
+    "attendance": [
+      {
+        "studentEmail": "parineeta@gmcpnalanda.com",
+        "studentId": "252611",
+        "studentName": "Uttchrist Sinha",
+        "status": "absent"
+      },
+      {
+        "studentEmail": "ganesh@gmcpnalanda.com",
+        "studentId": "54321",
+        "studentName": "GANESH KUMAR",
+        "status": "absent"
+      },
+      {
+        "studentEmail": "mohan@gmcpnalanda.com",
+        "studentId": "296754",
+        "studentName": "Mohan kumar",
+        "status": "present"
+      },
+      {
+        "studentEmail": "richa@gmcpnalanda.com",
+        "studentId": "956734",
+        "studentName": "ANVESH KUMAR",
+        "status": "absent"
+      }
+    ],
+    "totalStudents": 4,
+    "presentCount": 1,
+    "absentCount": 3,
+    "markedBy": "mukesh@gmcpnalanda.com",
+    "markedAt": "2026-01-15T12:51:04.259Z",
+    "editUntil": "2026-01-16T12:51:04.259Z",
+    "canEdit": true,
+    "status": "submitted"
+  },
+  "2026-01-18_2025-2028_CE_2_P1_CE_2025_2_CE201": {
+    "id": "2026-01-18_2025-2028_CE_2_P1_CE_2025_2_CE201",
+    "date": "2026-01-18",
+    "sessionId": "2025-2028",
+    "branchId": "CE",
+    "semester": 2,
+    "periodId": "P1",
+    "subjectId": "CE_2025_2_CE201",
+    "classNotConducted": false,
+    "attendance": [
+      {
+        "studentEmail": "parineeta@gmcpnalanda.com",
+        "studentId": "252611",
+        "studentName": "Uttchrist Sinha",
+        "status": "present"
+      },
+      {
+        "studentEmail": "ganesh@gmcpnalanda.com",
+        "studentId": "54321",
+        "studentName": "GANESH KUMAR",
+        "status": "absent"
+      },
+      {
+        "studentEmail": "mohan@gmcpnalanda.com",
+        "studentId": "296754",
+        "studentName": "Mohan kumar",
+        "status": "present"
+      },
+      {
+        "studentEmail": "richa@gmcpnalanda.com",
+        "studentId": "956734",
+        "studentName": "ANVESH KUMAR",
+        "status": "absent"
+      }
+    ],
+    "totalStudents": 4,
+    "presentCount": 2,
+    "absentCount": 2,
+    "markedBy": "mukesh@gmcpnalanda.com",
+    "markedAt": "2026-01-18T17:22:20.456Z",
+    "editUntil": "2026-01-19T17:22:20.456Z",
+    "canEdit": true,
+    "status": "submitted"
+  },
+  "2026-01-27_2025-2028_CE_2_P1_CE_2025_2_CE201": {
+    "id": "2026-01-27_2025-2028_CE_2_P1_CE_2025_2_CE201",
+    "date": "2026-01-27",
+    "sessionId": "2025-2028",
+    "branchId": "CE",
+    "semester": 2,
+    "periodId": "P1",
+    "subjectId": "CE_2025_2_CE201",
+    "classNotConducted": false,
+    "attendance": [
+      {
+        "studentEmail": "parineeta@gmcpnalanda.com",
+        "studentId": "252611",
+        "studentName": "Uttchrist Sinha",
+        "status": "present"
+      },
+      {
+        "studentEmail": "ganesh@gmcpnalanda.com",
+        "studentId": "54321",
+        "studentName": "GANESH KUMAR",
+        "status": "present"
+      },
+      {
+        "studentEmail": "mohan@gmcpnalanda.com",
+        "studentId": "296754",
+        "studentName": "Mohan kumar",
+        "status": "present"
+      },
+      {
+        "studentEmail": "richa@gmcpnalanda.com",
+        "studentId": "956734",
+        "studentName": "ANVESH KUMAR",
+        "status": "present"
+      }
+    ],
+    "totalStudents": 4,
+    "presentCount": 4,
+    "absentCount": 0,
+    "markedBy": "mukesh@gmcpnalanda.com",
+    "markedAt": "2026-01-27T17:02:47.589Z",
+    "editUntil": "2026-01-28T17:02:47.589Z",
+    "canEdit": false,
+    "status": "submitted",
+    "lockedBy": "admin@gmcpnalanda.com",
+    "lockedAt": "2026-01-27T17:44:34.831Z"
+  }
+}
