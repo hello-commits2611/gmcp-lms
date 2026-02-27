@@ -30,6 +30,10 @@ Thumbs.db
 *.swo
 *~
 
-# Firebase
+# Firebase - NEVER commit these!
 serviceAccount.json
 firebase-adminsdk-*.json
+firebase-service-account.json
+config/firebase-service-account.json
+*.json.secret
+config/firebase-single-line.txt
