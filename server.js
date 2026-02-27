@@ -132,8 +132,8 @@ app.use((req, res, next) => {
   next();
 });
 
-// Serve static files from lms-system/public
-app.use(express.static(path.join(__dirname, '../lms-system/public')));
+// Serve static files from public directory
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -161,7 +161,7 @@ app.use('/api/attendance', attendanceRoutes);
 
 // Default route - serve single login portal
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../lms-system/public/login.html'));
+  res.sendFile(path.join(__dirname, 'public/login.html'));
 });
 
 // Redirect all login-related routes to main portal
@@ -192,7 +192,7 @@ app.use('*', (req, res) => {
     console.log(`\u274c API route not found: ${req.method} ${req.path}`);
     res.status(404).json({ error: `API route not found: ${req.method} ${req.path}` });
   } else {
-    res.sendFile(path.join(__dirname, '../lms-system/public/login.html'));
+    res.sendFile(path.join(__dirname, 'public/login.html'));
   }
 });
 
