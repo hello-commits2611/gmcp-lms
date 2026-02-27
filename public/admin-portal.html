@@ -5200,12 +5200,17 @@
             }
             
             list.innerHTML = sessions.map(s => `
-                <div style="padding: 12px; border: 1px solid #e9ecef; border-radius: 8px; margin-bottom: 10px; background: white;">
-                    <div style="font-weight: 600; color: #333;">${s.name || s.id}</div>
-                    <div style="font-size: 13px; color: #666; margin-top: 4px;">${s.startYear} - ${s.endYear}</div>
-                    <div style="font-size: 12px; color: #999; margin-top: 4px;">
-                        <span class="badge badge-${s.status === 'active' ? 'success' : 'secondary'}">${s.status}</span>
+                <div style="padding: 12px; border: 1px solid #e9ecef; border-radius: 8px; margin-bottom: 10px; background: white; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: 600; color: #333;">${s.name || s.id}</div>
+                        <div style="font-size: 13px; color: #666; margin-top: 4px;">${s.startYear} - ${s.endYear}</div>
+                        <div style="font-size: 12px; color: #999; margin-top: 4px;">
+                            <span class="badge badge-${s.status === 'active' ? 'success' : 'secondary'}">${s.status}</span>
+                        </div>
                     </div>
+                    <button onclick="deleteSession('${s.id}')" class="btn btn-sm btn-danger" style="height: fit-content;">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
                 </div>
             `).join('');
         }
@@ -5219,12 +5224,17 @@
             }
             
             list.innerHTML = branches.map(b => `
-                <div style="padding: 12px; border: 1px solid #e9ecef; border-radius: 8px; margin-bottom: 10px; background: white;">
-                    <div style="font-weight: 600; color: #333;">${b.name}</div>
-                    <div style="font-size: 13px; color: #666; margin-top: 4px;">Code: ${b.code}</div>
-                    <div style="font-size: 12px; color: #999; margin-top: 4px;">
-                        <span class="badge badge-${b.status === 'active' ? 'success' : 'secondary'}">${b.status}</span>
+                <div style="padding: 12px; border: 1px solid #e9ecef; border-radius: 8px; margin-bottom: 10px; background: white; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: 600; color: #333;">${b.name}</div>
+                        <div style="font-size: 13px; color: #666; margin-top: 4px;">Code: ${b.code}</div>
+                        <div style="font-size: 12px; color: #999; margin-top: 4px;">
+                            <span class="badge badge-${b.status === 'active' ? 'success' : 'secondary'}">${b.status}</span>
+                        </div>
                     </div>
+                    <button onclick="deleteBranch('${b.id}')" class="btn btn-sm btn-danger" style="height: fit-content;">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
                 </div>
             `).join('');
         }
@@ -5238,12 +5248,17 @@
             }
             
             list.innerHTML = periods.map(p => `
-                <div style="padding: 12px; border: 1px solid #e9ecef; border-radius: 8px; margin-bottom: 10px; background: white;">
-                    <div style="font-weight: 600; color: #333;">${p.name}</div>
-                    <div style="font-size: 13px; color: #666; margin-top: 4px;">${p.startTime} - ${p.endTime}</div>
-                    <div style="font-size: 12px; color: #999; margin-top: 4px;">
-                        <span class="badge badge-info">Order: ${p.order}</span>
+                <div style="padding: 12px; border: 1px solid #e9ecef; border-radius: 8px; margin-bottom: 10px; background: white; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: 600; color: #333;">${p.name}</div>
+                        <div style="font-size: 13px; color: #666; margin-top: 4px;">${p.startTime} - ${p.endTime}</div>
+                        <div style="font-size: 12px; color: #999; margin-top: 4px;">
+                            <span class="badge badge-info">Order: ${p.order}</span>
+                        </div>
                     </div>
+                    <button onclick="deletePeriod('${p.id}')" class="btn btn-sm btn-danger" style="height: fit-content;">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
                 </div>
             `).join('');
         }
@@ -5378,6 +5393,81 @@
             }
         }
 
+        // Delete Session
+        async function deleteSession(sessionId) {
+            if (!confirm(`⚠️ Are you sure you want to delete this session?\n\nThis action cannot be undone.`)) {
+                return;
+            }
+            
+            try {
+                const res = await fetch(`/api/attendance/sessions/${sessionId}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+                
+                const data = await res.json();
+                if (data.success) {
+                    alert('✅ Session deleted successfully!');
+                    loadAttendanceConfiguration();
+                } else {
+                    alert('❌ ' + (data.error || 'Failed to delete session'));
+                }
+            } catch (error) {
+                console.error('Error deleting session:', error);
+                alert('❌ Error deleting session');
+            }
+        }
+
+        // Delete Branch
+        async function deleteBranch(branchId) {
+            if (!confirm(`⚠️ Are you sure you want to delete this branch?\n\nThis action cannot be undone.`)) {
+                return;
+            }
+            
+            try {
+                const res = await fetch(`/api/attendance/branches/${branchId}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+                
+                const data = await res.json();
+                if (data.success) {
+                    alert('✅ Branch deleted successfully!');
+                    loadAttendanceConfiguration();
+                } else {
+                    alert('❌ ' + (data.error || 'Failed to delete branch'));
+                }
+            } catch (error) {
+                console.error('Error deleting branch:', error);
+                alert('❌ Error deleting branch');
+            }
+        }
+
+        // Delete Period
+        async function deletePeriod(periodId) {
+            if (!confirm(`⚠️ Are you sure you want to delete this period?\n\nThis action cannot be undone.`)) {
+                return;
+            }
+            
+            try {
+                const res = await fetch(`/api/attendance/periods/${periodId}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+                
+                const data = await res.json();
+                if (data.success) {
+                    alert('✅ Period deleted successfully!');
+                    loadAttendanceConfiguration();
+                } else {
+                    alert('❌ ' + (data.error || 'Failed to delete period'));
+                }
+            } catch (error) {
+                console.error('Error deleting period:', error);
+                alert('❌ Error deleting period');
+            }
+        }
+
         // Load Subjects Data
         async function loadSubjectsData() {
             try {
@@ -5414,6 +5504,7 @@
                             <th>Branch</th>
                             <th>Semester</th>
                             <th>Credits</th>
+                            <th style="width: 120px;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -5425,6 +5516,11 @@
                                 <td>${s.branchId}</td>
                                 <td>Sem ${s.semester}</td>
                                 <td>${s.credits}</td>
+                                <td>
+                                    <button onclick="deleteSubject('${s.id}')" class="btn btn-sm btn-danger" title="Delete Subject">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
                             </tr>
                         `).join('')}
                     </tbody>
@@ -5502,6 +5598,31 @@
             } catch (error) {
                 console.error('Error adding subject:', error);
                 alert('❌ Error adding subject');
+            }
+        }
+
+        // Delete Subject
+        async function deleteSubject(subjectId) {
+            if (!confirm(`⚠️ Are you sure you want to delete this subject?\n\nThis will also remove all related enrollments and attendance records.\nThis action cannot be undone.`)) {
+                return;
+            }
+            
+            try {
+                const res = await fetch(`/api/attendance/subjects/${subjectId}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+                
+                const data = await res.json();
+                if (data.success) {
+                    alert('✅ Subject deleted successfully!');
+                    loadSubjectsData();
+                } else {
+                    alert('❌ ' + (data.error || 'Failed to delete subject'));
+                }
+            } catch (error) {
+                console.error('Error deleting subject:', error);
+                alert('❌ Error deleting subject');
             }
         }
 
