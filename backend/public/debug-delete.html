@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Delete - GMCP LMS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        button {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px 0;
+            border-radius: 4px;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+        }
+        button:hover {
+            background: #c82333;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .user-list {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Debug User Deletion</h1>
+    
+    <div class="user-list">
+        <h3>Current Users:</h3>
+        <div id="usersList">Loading...</div>
+    </div>
+    
+    <button onclick="testDeleteAdmin()">🗑️ Test Delete Admin User</button>
+    <button onclick="testDeleteStudent()">🗑️ Test Delete Student User</button>
+    <button onclick="loadUsers()">🔄 Refresh User List</button>
+    <button onclick="clearLog()">🧹 Clear Log</button>
+    
+    <div class="log" id="log"></div>
+
+    <script>
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.textContent += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(message);
+        }
+
+        function clearLog() {
+            document.getElementById('log').textContent = '';
+        }
+
+        // Load and display users
+        async function loadUsers() {
+            log('📋 Loading users...');
+            
+            try {
+                const response = await fetch('/api/users', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                log(`Response status: ${response.status}`);
+                
+                const result = await response.json();
+                log(`Response data: ${JSON.stringify(result, null, 2)}`);
+                
+                if (result.success && result.users) {
+                    const usersList = document.getElementById('usersList');
+                    usersList.innerHTML = result.users.map(user => 
+                        `<div>👤 <strong>${user.name}</strong> (${user.email}) - ${user.role}</div>`
+                    ).join('');
+                    
+                    log(`✅ Loaded ${result.users.length} users`);
+                } else {
+                    log(`❌ Failed to load users: ${result.error || 'Unknown error'}`);
+                }
+            } catch (error) {
+                log(`❌ Network error loading users: ${error.message}`);
+            }
+        }
+
+        // Test delete admin user
+        async function testDeleteAdmin() {
+            const email = 'admin@gmcpnalanda.com';
+            await testDeleteUser(email);
+        }
+
+        // Test delete student user
+        async function testDeleteStudent() {
+            const email = 'teststudent@gmcpnalanda.com';
+            await testDeleteUser(email);
+        }
+
+        // Generic delete user test
+        async function testDeleteUser(email) {
+            log(`🗑️ Attempting to delete user: ${email}`);
+            
+            try {
+                const url = `/api/users/${encodeURIComponent(email)}`;
+                log(`DELETE request URL: ${url}`);
+                
+                const response = await fetch(url, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                log(`Delete response status: ${response.status}`);
+                log(`Delete response headers: ${JSON.stringify([...response.headers.entries()])}`);
+                
+                const result = await response.json();
+                log(`Delete response data: ${JSON.stringify(result, null, 2)}`);
+                
+                if (result.success) {
+                    log(`✅ Successfully deleted user: ${email}`);
+                    // Reload users list
+                    setTimeout(() => loadUsers(), 500);
+                } else {
+                    log(`❌ Failed to delete user: ${result.error || 'Unknown error'}`);
+                }
+                
+            } catch (error) {
+                log(`❌ Network error deleting user: ${error.message}`);
+                log(`Error details: ${error.stack}`);
+            }
+        }
+
+        // Load users on page load
+        window.addEventListener('load', () => {
+            log('🚀 Debug page loaded');
+            loadUsers();
+        });
+
+        // Log any unhandled errors
+        window.addEventListener('error', (event) => {
+            log(`💥 JavaScript error: ${event.error.message}`);
+        });
+
+        window.addEventListener('unhandledrejection', (event) => {
+            log(`💥 Unhandled promise rejection: ${event.reason}`);
+        });
+    </script>
+</body>
+</html>

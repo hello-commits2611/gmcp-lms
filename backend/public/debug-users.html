@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Users - GMCP LMS</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; }
+        .section { margin-bottom: 30px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+        .section h2 { margin-top: 0; color: #333; }
+        .btn { padding: 10px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-info { background: #17a2b8; color: white; }
+        pre { background: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        .test-result { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        input { padding: 8px; margin: 5px; border: 1px solid #ddd; border-radius: 4px; }
+        label { display: inline-block; width: 100px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>GMCP LMS - User Debug Tool</h1>
+        
+        <!-- localStorage Inspection -->
+        <div class="section">
+            <h2>1. LocalStorage Users</h2>
+            <button class="btn btn-primary" onclick="showUsers()">Load Users from localStorage</button>
+            <button class="btn btn-danger" onclick="clearUsers()">Clear All Users</button>
+            <button class="btn btn-info" onclick="initializeExampleUsers()">Create Example Users</button>
+            <div id="usersDisplay"></div>
+        </div>
+
+        <!-- User Creation Test -->
+        <div class="section">
+            <h2>2. Test User Creation</h2>
+            <div>
+                <label>Name:</label><input type="text" id="testName" value="Test User" />
+                <label>Email:</label><input type="text" id="testEmail" value="test.user@gmcpnalanda.com" />
+                <label>Password:</label><input type="text" id="testPassword" value="TestPass123" />
+                <label>Role:</label>
+                <select id="testRole">
+                    <option value="student">Student</option>
+                    <option value="teacher">Teacher</option>
+                    <option value="management">Management</option>
+                    <option value="admin">Admin</option>
+                </select>
+                <br><br>
+                <button class="btn btn-success" onclick="createTestUser()">Create Test User</button>
+            </div>
+            <div id="createResult"></div>
+        </div>
+
+        <!-- Authentication Test -->
+        <div class="section">
+            <h2>3. Test Authentication</h2>
+            <div>
+                <label>Email:</label><input type="text" id="authEmail" value="test.user@gmcpnalanda.com" />
+                <label>Password:</label><input type="text" id="authPassword" value="TestPass123" />
+                <button class="btn btn-primary" onclick="testAuth()">Test Login</button>
+            </div>
+            <div id="authResult"></div>
+        </div>
+
+        <!-- Current Session -->
+        <div class="section">
+            <h2>4. Current Session</h2>
+            <button class="btn btn-info" onclick="showCurrentSession()">Check Current Session</button>
+            <div id="sessionDisplay"></div>
+        </div>
+
+        <!-- System Test -->
+        <div class="section">
+            <h2>5. Full System Test</h2>
+            <button class="btn btn-success" onclick="runFullTest()">Run Complete Test</button>
+            <div id="fullTestResult"></div>
+        </div>
+    </div>
+
+    <script src="js/userManager.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        function showUsers() {
+            const users = userManager.getAllUsers();
+            const rawData = localStorage.getItem('gmcp_lms_users');
+            
+            let html = '<h3>All Users (' + users.length + '):</h3>';
+            html += '<pre>' + JSON.stringify(users, null, 2) + '</pre>';
+            html += '<h3>Raw localStorage Data:</h3>';
+            html += '<pre>' + (rawData || 'No data found') + '</pre>';
+            
+            document.getElementById('usersDisplay').innerHTML = html;
+        }
+
+        function clearUsers() {
+            if (confirm('Are you sure you want to clear all users?')) {
+                localStorage.removeItem('gmcp_lms_users');
+                localStorage.removeItem('gmcp_lms_user');
+                showMessage('All users cleared!', 'success');
+                showUsers();
+            }
+        }
+
+        function initializeExampleUsers() {
+            userManager.initializeExampleUsers();
+            showMessage('Example users created!', 'success');
+            showUsers();
+        }
+
+        function createTestUser() {
+            const userData = {
+                name: document.getElementById('testName').value,
+                email: document.getElementById('testEmail').value,
+                password: document.getElementById('testPassword').value,
+                role: document.getElementById('testRole').value
+            };
+
+            console.log('Creating test user:', userData);
+            const result = userManager.createUser(userData);
+            console.log('Create result:', result);
+
+            let html = '<div class="test-result ' + (result.success ? 'success' : 'error') + '">';
+            html += '<h4>Create User Result:</h4>';
+            if (result.success) {
+                html += '<p>✅ User created successfully!</p>';
+                html += '<p>User: ' + result.user.name + ' (' + result.user.role + ')</p>';
+                html += '<p>Email: ' + result.user.email + '</p>';
+            } else {
+                html += '<p>❌ Error: ' + result.error + '</p>';
+            }
+            html += '</div>';
+            
+            document.getElementById('createResult').innerHTML = html;
+            if (result.success) showUsers();
+        }
+
+        async function testAuth() {
+            const email = document.getElementById('authEmail').value;
+            const password = document.getElementById('authPassword').value;
+
+            console.log('Testing authentication:', { email, password });
+            const result = await authManager.login(email, password);
+            console.log('Auth result:', result);
+
+            let html = '<div class="test-result ' + (result.success ? 'success' : 'error') + '">';
+            html += '<h4>Authentication Result:</h4>';
+            if (result.success) {
+                html += '<p>✅ Authentication successful!</p>';
+                html += '<p>User: ' + result.user.name + ' (' + result.user.role + ')</p>';
+                html += '<p>Redirect URL: ' + result.redirectUrl + '</p>';
+            } else {
+                html += '<p>❌ Authentication failed: ' + result.error + '</p>';
+            }
+            html += '</div>';
+            
+            document.getElementById('authResult').innerHTML = html;
+        }
+
+        function showCurrentSession() {
+            const isLoggedIn = authManager.isLoggedIn();
+            const currentUser = authManager.getCurrentUser();
+            const rawSession = localStorage.getItem('gmcp_lms_user');
+
+            let html = '<div class="test-result info">';
+            html += '<h4>Session Status:</h4>';
+            html += '<p>Is Logged In: ' + (isLoggedIn ? '✅ Yes' : '❌ No') + '</p>';
+            
+            if (currentUser) {
+                html += '<p>Current User: ' + currentUser.name + ' (' + currentUser.role + ')</p>';
+                html += '<p>Email: ' + currentUser.email + '</p>';
+                html += '<h5>Full User Data:</h5>';
+                html += '<pre>' + JSON.stringify(currentUser, null, 2) + '</pre>';
+            }
+
+            html += '<h5>Raw Session Data:</h5>';
+            html += '<pre>' + (rawSession || 'No session data') + '</pre>';
+            html += '</div>';
+            
+            document.getElementById('sessionDisplay').innerHTML = html;
+        }
+
+        async function runFullTest() {
+            let html = '<div class="test-result info"><h4>Full System Test Results:</h4>';
+            
+            // Test 1: Create a test user
+            html += '<p><strong>Test 1: User Creation</strong></p>';
+            const testUser = {
+                name: 'System Test User',
+                email: 'system.test@gmcpnalanda.com',
+                password: 'TestSystem123',
+                role: 'student',
+                course: 'BCA',
+                year: '1'
+            };
+            
+            const createResult = userManager.createUser(testUser);
+            html += '<p>Create User: ' + (createResult.success ? '✅ SUCCESS' : '❌ FAILED - ' + createResult.error) + '</p>';
+            
+            if (createResult.success) {
+                // Test 2: Authentication
+                html += '<p><strong>Test 2: Authentication</strong></p>';
+                const authResult = await authManager.login(testUser.email, testUser.password);
+                html += '<p>Authentication: ' + (authResult.success ? '✅ SUCCESS' : '❌ FAILED - ' + authResult.error) + '</p>';
+                
+                if (authResult.success) {
+                    html += '<p>Redirect URL: ' + authResult.redirectUrl + '</p>';
+                    
+                    // Test 3: Session Check
+                    html += '<p><strong>Test 3: Session Management</strong></p>';
+                    const isLoggedIn = authManager.isLoggedIn();
+                    html += '<p>Session Active: ' + (isLoggedIn ? '✅ YES' : '❌ NO') + '</p>';
+                    
+                    const sessionUser = authManager.getCurrentUser();
+                    html += '<p>Session User: ' + (sessionUser ? '✅ ' + sessionUser.name : '❌ NOT FOUND') + '</p>';
+                }
+            }
+            
+            html += '</div>';
+            document.getElementById('fullTestResult').innerHTML = html;
+        }
+
+        function showMessage(message, type) {
+            const div = document.createElement('div');
+            div.className = 'test-result ' + type;
+            div.innerHTML = '<p>' + message + '</p>';
+            document.body.appendChild(div);
+            setTimeout(() => div.remove(), 3000);
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            showUsers();
+            showCurrentSession();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GMCP LMS - Integration Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button { margin: 10px; padding: 10px 20px; cursor: pointer; }
+        .results { margin-top: 10px; padding: 10px; border: 1px solid #ccc; min-height: 100px; }
+    </style>
+</head>
+<body>
+    <h1>GMCP LMS - System Integration Test</h1>
+    
+    <div class="test-section info">
+        <h3>Test Setup</h3>
+        <p>This page tests the complete integration between userManager, authManager, and the portal system.</p>
+        <button onclick="runAllTests()">Run All Tests</button>
+        <button onclick="clearData()">Clear All Data</button>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 1: Create Admin User</h3>
+        <button onclick="createAdminUser()">Create Admin User</button>
+        <div class="results" id="adminUserResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 2: Create Different Role Users</h3>
+        <button onclick="createTestUsers()">Create Test Users</button>
+        <div class="results" id="testUsersResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 3: Test Authentication</h3>
+        <button onclick="testAuthentication()">Test Login/Logout</button>
+        <div class="results" id="authTestResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 4: List All Users</h3>
+        <button onclick="listAllUsers()">List Users</button>
+        <div class="results" id="listUsersResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 5: Portal Routing</h3>
+        <button onclick="testPortalRouting()">Test Portal Routes</button>
+        <div class="results" id="portalRoutingResult"></div>
+    </div>
+
+    <script src="js/userManager.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        function log(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : 'info';
+            element.innerHTML += `<div class="${className}">[${timestamp}] ${message}</div>`;
+        }
+
+        function clearLog(elementId) {
+            document.getElementById(elementId).innerHTML = '';
+        }
+
+        function clearData() {
+            localStorage.clear();
+            sessionStorage.clear();
+            alert('All data cleared');
+            location.reload();
+        }
+
+        function createAdminUser() {
+            clearLog('adminUserResult');
+            
+            const adminData = {
+                name: 'System Administrator',
+                email: 'admin@gmcpnalanda.com',
+                password: 'admin123',
+                role: 'admin',
+                employeeId: 'ADM001'
+            };
+
+            try {
+                const result = userManager.createUser(adminData);
+                if (result.success) {
+                    log('adminUserResult', 'Admin user created successfully', 'success');
+                    log('adminUserResult', `User ID: ${result.user.id}`, 'info');
+                } else {
+                    log('adminUserResult', `Failed: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                log('adminUserResult', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function createTestUsers() {
+            clearLog('testUsersResult');
+            
+            const testUsers = [
+                {
+                    name: 'John Student',
+                    email: 'john.student@gmcpnalanda.com',
+                    password: 'student123',
+                    role: 'student',
+                    branch: 'CSE',
+                    year: '2',
+                    rollNumber: 'CSE2024001'
+                },
+                {
+                    name: 'Prof. Jane Teacher',
+                    email: 'jane.teacher@gmcpnalanda.com',
+                    password: 'teacher123',
+                    role: 'teacher',
+                    employeeId: 'TCH001',
+                    subjects: ['Computer Science', 'Programming']
+                },
+                {
+                    name: 'Dr. Principal Manager',
+                    email: 'principal@gmcpnalanda.com',
+                    password: 'manager123',
+                    role: 'management',
+                    department: 'Academic',
+                    employeeId: 'MNG001'
+                }
+            ];
+
+            let successCount = 0;
+            testUsers.forEach((userData, index) => {
+                try {
+                    const result = userManager.createUser(userData);
+                    if (result.success) {
+                        successCount++;
+                        log('testUsersResult', `✓ Created ${userData.role}: ${userData.name}`, 'success');
+                    } else {
+                        log('testUsersResult', `✗ Failed to create ${userData.name}: ${result.error}`, 'error');
+                    }
+                } catch (error) {
+                    log('testUsersResult', `✗ Error creating ${userData.name}: ${error.message}`, 'error');
+                }
+            });
+
+            log('testUsersResult', `Created ${successCount}/${testUsers.length} test users`, 'info');
+        }
+
+        function testAuthentication() {
+            clearLog('authTestResult');
+            
+            // Test login with admin user
+            try {
+                log('authTestResult', 'Testing admin login...', 'info');
+                const loginResult = authManager.login('admin@gmcpnalanda.com', 'admin123');
+                
+                if (loginResult.success) {
+                    log('authTestResult', `✓ Login successful: ${loginResult.user.name}`, 'success');
+                    log('authTestResult', `Redirect URL: ${loginResult.redirectUrl}`, 'info');
+                    
+                    // Test if user is logged in
+                    const isLoggedIn = authManager.isLoggedIn();
+                    log('authTestResult', `Is logged in: ${isLoggedIn}`, isLoggedIn ? 'success' : 'error');
+                    
+                    // Test current user
+                    const currentUser = authManager.getCurrentUser();
+                    log('authTestResult', `Current user: ${currentUser ? currentUser.name : 'None'}`, 'info');
+                    
+                    // Test logout
+                    authManager.logout();
+                    const stillLoggedIn = authManager.isLoggedIn();
+                    log('authTestResult', `After logout - still logged in: ${stillLoggedIn}`, stillLoggedIn ? 'error' : 'success');
+                    
+                } else {
+                    log('authTestResult', `✗ Login failed: ${loginResult.error}`, 'error');
+                }
+            } catch (error) {
+                log('authTestResult', `✗ Authentication error: ${error.message}`, 'error');
+            }
+        }
+
+        function listAllUsers() {
+            clearLog('listUsersResult');
+            
+            try {
+                const users = userManager.getAllUsers();
+                log('listUsersResult', `Found ${users.length} users:`, 'info');
+                
+                users.forEach((user, index) => {
+                    log('listUsersResult', 
+                        `${index + 1}. ${user.name} (${user.email}) - Role: ${user.role} - Active: ${user.active}`, 
+                        'info');
+                });
+                
+                if (users.length === 0) {
+                    log('listUsersResult', 'No users found. Create some users first.', 'error');
+                }
+            } catch (error) {
+                log('listUsersResult', `Error listing users: ${error.message}`, 'error');
+            }
+        }
+
+        function testPortalRouting() {
+            clearLog('portalRoutingResult');
+            
+            const roles = ['student', 'teacher', 'management', 'admin'];
+            
+            roles.forEach(role => {
+                try {
+                    const portalUrl = authManager.getPortalUrl(role);
+                    log('portalRoutingResult', `${role}: ${portalUrl}`, 'success');
+                } catch (error) {
+                    log('portalRoutingResult', `Error for ${role}: ${error.message}`, 'error');
+                }
+            });
+            
+            // Test invalid role
+            try {
+                const invalidUrl = authManager.getPortalUrl('invalid');
+                log('portalRoutingResult', `Invalid role test: ${invalidUrl}`, 'error');
+            } catch (error) {
+                log('portalRoutingResult', 'Invalid role correctly rejected', 'success');
+            }
+        }
+
+        function runAllTests() {
+            document.querySelectorAll('.results').forEach(el => el.innerHTML = '');
+            
+            setTimeout(() => createAdminUser(), 100);
+            setTimeout(() => createTestUsers(), 500);
+            setTimeout(() => testAuthentication(), 1000);
+            setTimeout(() => listAllUsers(), 1500);
+            setTimeout(() => testPortalRouting(), 2000);
+        }
+
+        // Initialize test page
+        window.addEventListener('load', () => {
+            console.log('Integration test page loaded');
+            log('adminUserResult', 'Ready to test admin user creation', 'info');
+            log('testUsersResult', 'Ready to test user creation', 'info');
+            log('authTestResult', 'Ready to test authentication', 'info');
+            log('listUsersResult', 'Ready to list users', 'info');
+            log('portalRoutingResult', 'Ready to test portal routing', 'info');
+        });
+    </script>
+</body>
+</html>

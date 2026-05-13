@@ -1,10 +1,9 @@
 const express = require('express');
-const SessionManager = require('../utils/sessionManager');
+const sessionManager = require('../utils/sharedSessionManager');
 const bcrypt = require('bcryptjs');
 const firestoreService = require('../utils/firestore-service');
 
 const router = express.Router();
-const sessionManager = new SessionManager();
 
 
 // Middleware to validate email domain
@@ -157,7 +156,7 @@ router.post('/login', async (req, res) => {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             maxAge: 24 * 60 * 60 * 1000, // 24 hours
-            sameSite: 'strict'
+            sameSite: 'lax' // Allow cookie on same-site redirects
         });
 
         console.log(`✅ User logged in: ${userData.name} (${userData.role}) from ${req.ip}`);

@@ -167,8 +167,33 @@ async function processSingleAttendanceRecord(record) {
       }
     }
     
-    // Determine attendance type
-    const attendanceType = await determineAttendanceType(user.id, recordTimestamp);
+    // Determine attendance type based on device configuration
+    let attendanceType;
+    const deviceMode = device.configuration?.attendanceMode || 'IN_OUT';
+    
+    // Check if this is first punch of the day
+    const today = moment(recordTimestamp).tz(ATTENDANCE_TIMEZONE).format('YYYY-MM-DD');
+    const todayRecords = await attendanceDAO.query([
+      { field: 'userId', operator: '==', value: user.id },
+      { field: 'attendance.date', operator: '==', value: today }
+    ], 100);
+    
+    // SMART LOGIC: First punch of the day is ALWAYS IN, regardless of device mode
+    if (todayRecords.length === 0) {
+      attendanceType = 'IN';
+      console.log('🌅 First punch of the day - automatically recorded as IN');
+    } else if (deviceMode === 'CHECK_IN_ONLY' || deviceMode === 'IN_ONLY') {
+      // Device is configured for check-in only - all punches are IN
+      attendanceType = 'IN';
+      console.log('Device in CHECK-IN only mode - recording as IN');
+    } else if (deviceMode === 'CHECK_OUT_ONLY' || deviceMode === 'OUT_ONLY') {
+      // Device is configured for check-out only - all punches are OUT
+      attendanceType = 'OUT';
+      console.log('Device in CHECK-OUT only mode - recording as OUT');
+    } else {
+      // Default IN/OUT toggle mode
+      attendanceType = await determineAttendanceType(user.id, recordTimestamp);
+    }
     
     // Calculate status
     const status = calculateAttendanceStatus(recordTimestamp, attendanceType, user);
@@ -893,7 +918,8 @@ router.get('/reports/daily', async (req, res) => {
       totalUsers: report.length,
       present: report.filter(r => r.status !== 'ABSENT').length,
       late: report.filter(r => r.status === 'LATE').length,
-      report: report
+      report: report,
+      records: records  // Add raw records for frontend
     });
   } catch (error) {
     console.error('Error generating daily report:', error);

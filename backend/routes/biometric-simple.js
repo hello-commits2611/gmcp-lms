@@ -186,10 +186,57 @@ const handlePunch = async (req, res) => {
           return timeB - timeA; // Descending order (latest first)
         });
       
-      const attendanceType = todayRecords.length === 0 ? 'IN' : 
-                            (todayRecords[0].attendance.type === 'IN' ? 'OUT' : 'IN');
+      // Get device configuration for minimum time gap (default: 4 hours = 14400 seconds)
+      const device = await biometricDevicesDAO.findOneByField('deviceInfo.deviceId', deviceSN);
+      const minTimeGapSeconds = device?.configuration?.minOutTimeGap || 14400; // 4 hours default
+      const duplicateWindowSeconds = device?.configuration?.duplicateCheckWindow || 300; // 5 minutes
       
-      console.log('Attendance type:', attendanceType);
+      let attendanceType;
+      let skipReason = null;
+      
+      // 🥇 RULE 1: First punch of the day is ALWAYS IN
+      if (todayRecords.length === 0) {
+        attendanceType = 'IN';
+        console.log('🌅 Rule 1: First punch of the day - recorded as IN');
+      } else {
+        const lastRecord = todayRecords[0]; // Latest record (sorted descending)
+        const lastType = lastRecord.attendance.type;
+        const lastTime = lastRecord.createdAt?.toDate?.() || new Date(lastRecord.createdAt?._seconds * 1000);
+        const timeDiffSeconds = (timestampMoment.toDate() - lastTime) / 1000;
+        
+        console.log(`Last punch: ${lastType} at ${lastTime.toLocaleTimeString()}, ${Math.floor(timeDiffSeconds/60)} minutes ago`);
+        
+        // 🥉 RULE 3: Ignore duplicate fast punches (within 1-5 minutes)
+        if (timeDiffSeconds < duplicateWindowSeconds) {
+          console.log(`❌ Rule 3: Duplicate punch within ${duplicateWindowSeconds}s - IGNORED`);
+          skipReason = 'duplicate';
+        }
+        // 🥈 RULE 2: Second valid punch with sufficient time gap = OUT
+        else if (lastType === 'IN' && timeDiffSeconds >= minTimeGapSeconds) {
+          attendanceType = 'OUT';
+          const hoursGap = (timeDiffSeconds / 3600).toFixed(1);
+          console.log(`📍 Rule 2: Valid OUT after ${hoursGap}h gap`);
+        }
+        // Time gap too short for OUT
+        else if (lastType === 'IN' && timeDiffSeconds < minTimeGapSeconds) {
+          const remainingMinutes = Math.ceil((minTimeGapSeconds - timeDiffSeconds) / 60);
+          console.log(`⚠️ Not enough time passed. Need ${remainingMinutes} more minutes for OUT`);
+          skipReason = 'time_gap_too_short';
+        }
+        // 🏆 RULE 4: Already has OUT - ignore further punches
+        else if (lastType === 'OUT') {
+          console.log('❌ Rule 4: Already punched OUT today - IGNORED');
+          skipReason = 'already_out';
+        }
+      }
+      
+      // Skip if any rule rejected this punch
+      if (skipReason) {
+        console.log(`⏭️ Skipping this punch (${skipReason})`);
+        continue;
+      }
+      
+      console.log(`✅ Recording as: ${attendanceType}`);
       
       // Save to Firestore
       const attendanceData = {

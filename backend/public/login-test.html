@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Test - GMCP LMS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .debug {
+            background: #e2e3e5;
+            color: #383d41;
+            border: 1px solid #d6d8db;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Login Test Page</h1>
+        <p>This is a debug page to test the login functionality</p>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" value="buddy@gmcpnalanda.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" value="Kumar@11432" required>
+            </div>
+            
+            <button type="submit">Test Login</button>
+        </form>
+        
+        <div id="messages"></div>
+        
+        <div style="margin-top: 20px;">
+            <h3>Debug Info:</h3>
+            <button onclick="testHealthCheck()">Test Health Check</button>
+            <button onclick="testAuthCheck()">Test Auth Check</button>
+            <button onclick="clearSession()">Clear Session</button>
+        </div>
+    </div>
+
+    <script>
+        const messagesDiv = document.getElementById('messages');
+        
+        function showMessage(message, type = 'error') {
+            const div = document.createElement('div');
+            div.className = `message ${type}`;
+            div.textContent = message;
+            messagesDiv.appendChild(div);
+            
+            // Auto-remove after 10 seconds
+            setTimeout(() => {
+                if (div.parentNode) {
+                    div.parentNode.removeChild(div);
+                }
+            }, 10000);
+        }
+        
+        function showDebug(title, data) {
+            const div = document.createElement('div');
+            div.className = 'message debug';
+            div.textContent = `${title}:\n${JSON.stringify(data, null, 2)}`;
+            messagesDiv.appendChild(div);
+        }
+        
+        // Test health check
+        async function testHealthCheck() {
+            try {
+                const response = await fetch('/api/health', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                const result = await response.json();
+                showDebug('Health Check', { status: response.status, data: result });
+                showMessage('Health check successful!', 'success');
+            } catch (error) {
+                showDebug('Health Check Error', error);
+                showMessage('Health check failed: ' + error.message, 'error');
+            }
+        }
+        
+        // Test auth check
+        async function testAuthCheck() {
+            try {
+                const response = await fetch('/api/auth/check', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                const result = await response.json();
+                showDebug('Auth Check', { status: response.status, data: result });
+                
+                if (result.authenticated) {
+                    showMessage('User is authenticated!', 'success');
+                } else {
+                    showMessage('User is not authenticated', 'error');
+                }
+            } catch (error) {
+                showDebug('Auth Check Error', error);
+                showMessage('Auth check failed: ' + error.message, 'error');
+            }
+        }
+        
+        // Clear session
+        function clearSession() {
+            localStorage.removeItem('gmcp_lms_user');
+            showMessage('Local session cleared', 'success');
+        }
+        
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            showMessage('Attempting login...', 'success');
+            
+            try {
+                console.log('Making login request to /api/auth/login');
+                
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password }),
+                    credentials: 'include'
+                });
+                
+                console.log('Response status:', response.status);
+                
+                const result = await response.json();
+                console.log('Response data:', result);
+                
+                showDebug('Login Response', { 
+                    status: response.status, 
+                    headers: Object.fromEntries(response.headers.entries()), 
+                    data: result 
+                });
+                
+                if (response.ok && result.success) {
+                    showMessage('Login successful!', 'success');
+                    
+                    // Store session data
+                    localStorage.setItem('gmcp_lms_user', JSON.stringify({
+                        user: result.user,
+                        sessionId: result.sessionId || 'temp',
+                        expiresAt: new Date(Date.now() + 24*60*60*1000).toISOString()
+                    }));
+                    
+                    // Check if password reset is required
+                    if (result.requirePasswordReset) {
+                        showMessage('Redirecting to password reset...', 'success');
+                        setTimeout(() => {
+                            window.location.href = '/change-password.html';
+                        }, 2000);
+                    } else {
+                        // Check profile completion
+                        checkProfileStatus();
+                    }
+                } else {
+                    showMessage(`Login failed: ${result.error || result.message}`, 'error');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showDebug('Login Error', error);
+                showMessage('Login failed: ' + error.message, 'error');
+            }
+        });
+        
+        async function checkProfileStatus() {
+            try {
+                const response = await fetch('/api/profile/status', {
+                    credentials: 'include'
+                });
+                const result = await response.json();
+                showDebug('Profile Status', result);
+                
+                if (!result.profileComplete) {
+                    showMessage('Redirecting to profile completion...', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/my-profile.html';
+                    }, 2000);
+                } else {
+                    showMessage('Redirecting to dashboard...', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/student-portal.html';
+                    }, 2000);
+                }
+            } catch (error) {
+                console.error('Profile status check error:', error);
+                showMessage('Profile status check failed: ' + error.message, 'error');
+            }
+        }
+        
+        // Clear messages on page load
+        window.addEventListener('load', () => {
+            messagesDiv.innerHTML = '';
+            showMessage('Page loaded. Ready to test login.', 'success');
+        });
+    </script>
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GMCP LMS - Login Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .message {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .error-message {
+            background: #fff3f3;
+            color: #d63031;
+            border-left: 4px solid #d63031;
+        }
+
+        .success-message {
+            background: #f0fff4;
+            color: #00b894;
+            border-left: 4px solid #00b894;
+        }
+
+        .info-message {
+            background: #e8f4fd;
+            color: #0066cc;
+            border-left: 4px solid #0066cc;
+        }
+
+        .test-accounts {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid #dee2e6;
+        }
+
+        .test-accounts h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .account-item {
+            background: white;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            border: 1px solid #e9ecef;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .account-item:hover {
+            background: #e9ecef;
+        }
+
+        .account-email {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .account-role {
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .links {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .links a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            margin: 0 10px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo-container">
+            <h1>GMCP LMS</h1>
+            <p class="subtitle">Role-Based Learning Management System</p>
+        </div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Institute Email ID *</label>
+                <input type="email" id="email" name="email" required placeholder="username@gmcpnalanda.com">
+                <small style="color: #666; font-size: 12px;">Only @gmcpnalanda.com emails are allowed</small>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password *</label>
+                <input type="password" id="password" name="password" required placeholder="Enter your password">
+            </div>
+
+            <button type="submit" class="login-btn" id="loginBtn">
+                Login to Dashboard
+            </button>
+
+            <div id="messageContainer"></div>
+        </form>
+
+        <div class="test-accounts">
+            <h3>🧪 Test Accounts (Click to auto-fill)</h3>
+            <div class="account-item" onclick="fillLogin('admin@gmcpnalanda.com', 'AdminGMCP@2025')">
+                <div class="account-email">admin@gmcpnalanda.com</div>
+                <div class="account-role">Admin - Full system access</div>
+            </div>
+            <div class="account-item" onclick="fillLogin('john.doe@gmcpnalanda.com', 'StudentGMCP@2025')">
+                <div class="account-email">john.doe@gmcpnalanda.com</div>
+                <div class="account-role">Student - Student dashboard</div>
+            </div>
+            <div class="account-item" onclick="fillLogin('prof.smith@gmcpnalanda.com', 'TeacherGMCP@2025')">
+                <div class="account-email">prof.smith@gmcpnalanda.com</div>
+                <div class="account-role">Teacher - Teacher dashboard</div>
+            </div>
+        </div>
+
+        <div class="links">
+            <a href="admin-portal.html">Admin Portal</a>
+        </div>
+
+        <div class="footer">
+            <p>Powered by Ganga Memorial Educational and Development Society</p>
+        </div>
+    </div>
+
+    <script>
+        // Test user data (would come from Firebase in production)
+        const testUsers = {
+            'admin@gmcpnalanda.com': {
+                password: 'AdminGMCP@2025',
+                role: 'admin',
+                name: 'System Administrator',
+                dashboard: 'management-dashboard.html'
+            },
+            'john.doe@gmcpnalanda.com': {
+                password: 'StudentGMCP@2025',
+                role: 'student',
+                name: 'John Doe',
+                dashboard: 'student-dashboard.html'
+            },
+            'prof.smith@gmcpnalanda.com': {
+                password: 'TeacherGMCP@2025',
+                role: 'teacher',
+                name: 'Professor Smith',
+                dashboard: 'teacher-dashboard.html'
+            }
+        };
+
+        // Fill login form
+        function fillLogin(email, password) {
+            document.getElementById('email').value = email;
+            document.getElementById('password').value = password;
+        }
+
+        // Show message
+        function showMessage(message, type = 'error') {
+            const container = document.getElementById('messageContainer');
+            container.innerHTML = `
+                <div class="${type}-message message" style="display: block;">
+                    ${message}
+                </div>
+            `;
+        }
+
+        // Form submit handler
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            
+            // Validation
+            if (!email) {
+                showMessage('Please enter your email address', 'error');
+                return;
+            }
+            
+            if (!email.endsWith('@gmcpnalanda.com')) {
+                showMessage('Only @gmcpnalanda.com email addresses are allowed', 'error');
+                return;
+            }
+            
+            if (!password) {
+                showMessage('Please enter your password', 'error');
+                return;
+            }
+            
+            // Test authentication (would be Firebase in production)
+            const user = testUsers[email];
+            if (!user) {
+                showMessage('No account found with this email. Please contact admin.', 'error');
+                return;
+            }
+            
+            if (user.password !== password) {
+                showMessage('Incorrect password. Please try again.', 'error');
+                return;
+            }
+            
+            // Success!
+            showMessage(`Login successful! Redirecting to ${user.role} dashboard...`, 'success');
+            
+            // Store user data
+            localStorage.setItem('currentUser', JSON.stringify({
+                email: email,
+                name: user.name,
+                role: user.role
+            }));
+            
+            // Redirect after 1.5 seconds
+            setTimeout(() => {
+                window.location.href = user.dashboard;
+            }, 1500);
+        });
+
+        // Check if user is already logged in
+        window.addEventListener('load', () => {
+            const userData = localStorage.getItem('currentUser');
+            if (userData) {
+                const user = JSON.parse(userData);
+                showMessage(`Welcome back, ${user.name}! Redirecting...`, 'info');
+                setTimeout(() => {
+                    const testUser = testUsers[user.email];
+                    if (testUser) {
+                        window.location.href = testUser.dashboard;
+                    }
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>

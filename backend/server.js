@@ -24,6 +24,8 @@ const biometricSimpleRoutes = require('./routes/biometric-simple');
 const adminRoutes = require('./routes/admin');
 const facultyRoutes = require('./routes/faculty');
 const attendanceRoutes = require('./routes/attendance');
+const attendanceConfigRoutes = require('./routes/attendance-config');
+const subjectsRoutes = require('./routes/subjects');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -78,8 +80,70 @@ app.use((req, res, next) => {
 //   }
 // }));
 
-// Serve static files from lms-system/public
-app.use(express.static(path.join(__dirname, '../lms-system/public')));
+// Authentication middleware for protected HTML files
+const sessionManager = require('./utils/sharedSessionManager');
+
+app.use((req, res, next) => {
+  // ONLY protect these specific portal HTML files
+  const protectedPortals = ['/admin-portal.html', '/faculty-portal.html', '/student-portal.html'];
+  
+  // If not requesting a protected portal, allow through
+  if (!protectedPortals.includes(req.path)) {
+    return next();
+  }
+  
+  // Get session token from cookie
+  const sessionToken = req.cookies?.sessionToken;
+  
+  console.log(`🔐 Protected portal access: ${req.path}`);
+  console.log(`   Cookie: ${sessionToken ? 'Present' : 'Missing'}`);
+  
+  // No cookie = redirect to login
+  if (!sessionToken) {
+    const portalName = req.path.replace('/', '').replace('.html', '');
+    console.log(`   ❌ No cookie - redirecting to login`);
+    return res.redirect(`/login.html?redirect=${portalName}`);
+  }
+  
+  // Validate session
+  const validation = sessionManager.validateSession(sessionToken);
+  console.log(`   Valid: ${validation.valid}, Role: ${validation.userData?.role}`);
+  
+  if (!validation.valid) {
+    console.log(`   ❌ Invalid session`);
+    return res.redirect('/login.html?error=session_expired');
+  }
+  
+  // Check role-based access
+  const userRole = validation.userData?.role;
+  const allowAccess = (
+    (req.path === '/admin-portal.html' && userRole === 'admin') ||
+    (req.path === '/faculty-portal.html' && ['teacher', 'faculty', 'admin'].includes(userRole)) ||
+    (req.path === '/student-portal.html' && ['student', 'admin'].includes(userRole))
+  );
+  
+  if (!allowAccess) {
+    const portalName = req.path.replace('/', '').replace('.html', '');
+    console.log(`   ❌ Role '${userRole}' not allowed for ${req.path}`);
+    return res.redirect(`/login.html?error=unauthorized&redirect=${portalName}`);
+  }
+  
+  console.log(`   ✅ Access granted`);
+  next();
+});
+
+// Disable caching for HTML files to ensure users get latest version
+app.use((req, res, next) => {
+  if (req.path.endsWith('.html')) {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+  }
+  next();
+});
+
+// Serve static files from public directory
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -99,12 +163,15 @@ app.use('/api/biometric-simple', biometricSimpleRoutes);
 app.use('/iclock', biometricSimpleRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/faculty', facultyRoutes);
+// IMPORTANT: More specific routes must come BEFORE general routes
+app.use('/api/attendance/subjects', subjectsRoutes);
+app.use('/api/attendance', attendanceConfigRoutes);
 app.use('/api/attendance', attendanceRoutes);
 
 
 // Default route - serve single login portal
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../lms-system/public/login.html'));
+  res.sendFile(path.join(__dirname, 'public/login.html'));
 });
 
 // Redirect all login-related routes to main portal
@@ -117,9 +184,7 @@ app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'healthy', 
     timestamp: new Date().toISOString(),
-    service: 'GMCP LMS Unified Portal',
-    version: '1.1.0-biometric',
-    features: ['biometric-attendance', 'x2008-device']
+    service: 'GMCP LMS Unified Portal'
   });
 });
 
@@ -137,24 +202,19 @@ app.use('*', (req, res) => {
     console.log(`\u274c API route not found: ${req.method} ${req.path}`);
     res.status(404).json({ error: `API route not found: ${req.method} ${req.path}` });
   } else {
-    res.sendFile(path.join(__dirname, '../lms-system/public/login.html'));
+    res.sendFile(path.join(__dirname, 'public/login.html'));
   }
 });
 
 
-// Start server - bind to 0.0.0.0 for Render deployment
-const HOST = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
-app.listen(PORT, HOST, () => {
+// Start server
+app.listen(PORT, () => {
   console.log(`🚀 GMCP LMS Unified Portal running on port ${PORT}`);
   console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🌐 Host: ${HOST}`);
   console.log(`🌐 Single Portal: http://localhost:${PORT}`);
   console.log(`📋 Setup Page: http://localhost:${PORT}/setup.html`);
   console.log(`🧪 Integration Test: http://localhost:${PORT}/test-integration.html`);
   console.log(`\n⚡ All login routes now redirect to main portal for simplicity`);
-  console.log(`\n👆 Biometric Attendance: ENABLED`);
-  console.log(`   X2008 Device Support: Active`);
-  console.log(`   Admin Portal: http://localhost:${PORT}/admin-portal.html`);
 });
 
 module.exports = app;
