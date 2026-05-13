@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GMCP LMS - System Overview</title>
+    <link rel="icon" type="image/jpeg" href="images/logo.jpg">
+    <link rel="stylesheet" href="css/common.css">
+    <style>
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 20px; padding: 40px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .header { text-align: center; margin-bottom: 40px; }
+        .header img { width: 120px; height: 120px; margin-bottom: 20px; }
+        .header h1 { font-size: 32px; color: #333; margin-bottom: 10px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .header p { color: #666; font-size: 16px; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .feature-card { background: #f8f9fa; border-radius: 12px; padding: 25px; border: 1px solid #e9ecef; transition: transform 0.3s ease; }
+        .feature-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+        .feature-card h3 { color: #333; margin-bottom: 15px; font-size: 18px; }
+        .feature-card ul { list-style: none; padding: 0; }
+        .feature-card li { padding: 5px 0; color: #666; }
+        .feature-card li:before { content: '✅'; margin-right: 8px; }
+        .test-section { background: #e8f4fd; border-radius: 12px; padding: 30px; margin-bottom: 30px; border-left: 4px solid #0066cc; }
+        .test-accounts { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin: 20px 0; }
+        .test-account { background: white; border-radius: 10px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s ease; }
+        .test-account:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
+        .test-account .role { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 4px 12px; border-radius: 15px; font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 10px; display: inline-block; }
+        .test-account .email { font-weight: 600; color: #333; margin-bottom: 5px; }
+        .test-account .password { color: #666; font-size: 14px; margin-bottom: 10px; }
+        .test-account .features { color: #999; font-size: 12px; }
+        .portal-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 30px 0; }
+        .portal-link { background: white; border-radius: 10px; padding: 20px; text-align: center; text-decoration: none; color: #333; transition: all 0.3s ease; border: 2px solid transparent; }
+        .portal-link:hover { border-color: #667eea; transform: translateY(-2px); text-decoration: none; color: #667eea; }
+        .portal-link .icon { font-size: 32px; margin-bottom: 10px; }
+        .portal-link .title { font-weight: 600; margin-bottom: 5px; }
+        .portal-link .desc { font-size: 12px; color: #666; }
+        .tech-stack { background: #f0fff4; border-radius: 12px; padding: 20px; border-left: 4px solid #00b894; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="images/logo.jpg" alt="GMCP Logo">
+            <h1>🎓 GMCP Learning Management System</h1>
+            <p>Complete Role-Based Educational Portal System</p>
+            <p><strong>Ganga Memorial College of Polytechnic, Harnaut, Nalanda</strong></p>
+        </div>
+
+        <div class="test-section">
+            <h2>🚀 Quick Start - Test the System</h2>
+            <p>Click on any test account below to automatically login to the respective portal:</p>
+            
+            <div class="test-accounts">
+                <div class="test-account" onclick="loginAs('admin@gmcpnalanda.com', 'AdminGMCP@2025')">
+                    <div class="role">Admin</div>
+                    <div class="email">admin@gmcpnalanda.com</div>
+                    <div class="password">Password: AdminGMCP@2025</div>
+                    <div class="features">User management, system settings, full control</div>
+                </div>
+                
+                <div class="test-account" onclick="loginAs('principal@gmcpnalanda.com', 'Principal@2025')">
+                    <div class="role">Management</div>
+                    <div class="email">principal@gmcpnalanda.com</div>
+                    <div class="password">Password: Principal@2025</div>
+                    <div class="features">Analytics, reports, system oversight</div>
+                </div>
+                
+                <div class="test-account" onclick="loginAs('prof.smith@gmcpnalanda.com', 'TeacherGMCP@2025')">
+                    <div class="role">Faculty</div>
+                    <div class="email">prof.smith@gmcpnalanda.com</div>
+                    <div class="password">Password: TeacherGMCP@2025</div>
+                    <div class="features">Class management, assignments, grading</div>
+                </div>
+                
+                <div class="test-account" onclick="loginAs('john.doe@gmcpnalanda.com', 'StudentGMCP@2025')">
+                    <div class="role">Student</div>
+                    <div class="email">john.doe@gmcpnalanda.com</div>
+                    <div class="password">Password: StudentGMCP@2025</div>
+                    <div class="features">Assignments, grades, attendance</div>
+                </div>
+            </div>
+            
+            <div class="text-center" style="margin-top: 20px;">
+                <a href="login.html" class="btn btn-primary btn-lg">🚪 Go to Login Page</a>
+            </div>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3>🔐 Authentication System</h3>
+                <ul>
+                    <li>Email-based login with domain validation</li>
+                    <li>Role-based access control</li>
+                    <li>Automatic portal routing</li>
+                    <li>Session management</li>
+                    <li>Security validation</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card">
+                <h3>👨‍🎓 Student Portal</h3>
+                <ul>
+                    <li>Personal dashboard with stats</li>
+                    <li>Assignment management</li>
+                    <li>Grade tracking & GPA</li>
+                    <li>Attendance monitoring</li>
+                    <li>Profile management</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card">
+                <h3>👨‍🏫 Faculty Portal</h3>
+                <ul>
+                    <li>Class management</li>
+                    <li>Assignment creation</li>
+                    <li>Student grading system</li>
+                    <li>Attendance tracking</li>
+                    <li>Student performance overview</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card">
+                <h3>📊 Management Portal</h3>
+                <ul>
+                    <li>Institution analytics</li>
+                    <li>Performance reports</li>
+                    <li>System activity monitoring</li>
+                    <li>Data visualization</li>
+                    <li>Strategic oversight</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card">
+                <h3>⚙️ Admin Portal</h3>
+                <ul>
+                    <li>Complete user management</li>
+                    <li>Role-based user creation</li>
+                    <li>System settings control</li>
+                    <li>Security management</li>
+                    <li>Backup & maintenance</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🎨 Design Features</h3>
+                <ul>
+                    <li>Responsive mobile-first design</li>
+                    <li>Consistent UI components</li>
+                    <li>Beautiful gradients & animations</li>
+                    <li>Accessible user interface</li>
+                    <li>Professional styling</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="portal-links">
+            <a href="login.html" class="portal-link">
+                <div class="icon">🚪</div>
+                <div class="title">Login Portal</div>
+                <div class="desc">Main entry point with test accounts</div>
+            </a>
+            
+            <a href="student-portal.html" class="portal-link">
+                <div class="icon">👨‍🎓</div>
+                <div class="title">Student Portal</div>
+                <div class="desc">Student dashboard and features</div>
+            </a>
+            
+            <a href="faculty-portal.html" class="portal-link">
+                <div class="icon">👨‍🏫</div>
+                <div class="title">Faculty Portal</div>
+                <div class="desc">Teaching and class management</div>
+            </a>
+            
+            <a href="management-portal.html" class="portal-link">
+                <div class="icon">📊</div>
+                <div class="title">Management Portal</div>
+                <div class="desc">Analytics and reporting</div>
+            </a>
+            
+            <a href="admin-portal.html" class="portal-link">
+                <div class="icon">⚙️</div>
+                <div class="title">Admin Portal</div>
+                <div class="desc">Complete system control</div>
+            </a>
+            
+            <a href="admin-portal.html" class="portal-link">
+                <div class="icon">🛠️</div>
+                <div class="title">Legacy Admin Panel</div>
+                <div class="desc">Enhanced Firebase integration</div>
+            </a>
+        </div>
+
+        <div class="tech-stack">
+            <h3>🛠️ Technical Implementation</h3>
+            <div class="row">
+                <div class="col-6">
+                    <h4>Frontend Technologies:</h4>
+                    <ul>
+                        <li>HTML5 with semantic structure</li>
+                        <li>Modern CSS3 with Grid & Flexbox</li>
+                        <li>Vanilla JavaScript ES6+</li>
+                        <li>Responsive design principles</li>
+                        <li>Component-based architecture</li>
+                    </ul>
+                </div>
+                <div class="col-6">
+                    <h4>System Features:</h4>
+                    <ul>
+                        <li>Role-based access control (RBAC)</li>
+                        <li>Session management</li>
+                        <li>Domain-based authentication</li>
+                        <li>Modular portal architecture</li>
+                        <li>Mobile-first responsive design</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center" style="margin-top: 40px; padding-top: 30px; border-top: 1px solid #eee;">
+            <p style="color: #666; margin-bottom: 10px;">
+                <strong>Ready for Firebase Integration</strong> - All portals are designed to work seamlessly with your existing Firebase backend
+            </p>
+            <p style="color: #999; font-size: 14px;">
+                © 2025 Ganga Memorial College of Polytechnic, Harnaut, Nalanda • GMCP LMS v1.0
+            </p>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        function loginAs(email, password) {
+            // Store credentials and redirect to login
+            sessionStorage.setItem('autoLogin', JSON.stringify({ email, password }));
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

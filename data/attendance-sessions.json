@@ -1,0 +1,29 @@
+{
+  "2023-2026": {
+    "id": "2023-2026",
+    "name": "2023-2026",
+    "startYear": 2023,
+    "endYear": 2026,
+    "status": "active",
+    "createdAt": "2023-07-01T00:00:00.000Z",
+    "createdBy": "admin@gmcpnalanda.com"
+  },
+  "2024-2027": {
+    "id": "2024-2027",
+    "name": "2024-2027",
+    "startYear": 2024,
+    "endYear": 2027,
+    "status": "active",
+    "createdAt": "2024-07-01T00:00:00.000Z",
+    "createdBy": "admin@gmcpnalanda.com"
+  },
+  "2025-2028": {
+    "id": "2025-2028",
+    "name": "2025-2028",
+    "startYear": 2025,
+    "endYear": 2028,
+    "status": "active",
+    "createdAt": "2025-07-01T00:00:00.000Z",
+    "createdBy": "admin@gmcpnalanda.com"
+  }
+}

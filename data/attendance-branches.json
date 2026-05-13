@@ -1,0 +1,38 @@
+{
+  "CSE": {
+    "id": "CSE",
+    "name": "Computer Science Engineering",
+    "code": "CSE",
+    "status": "active",
+    "semesters": [1, 2, 3, 4, 5, 6],
+    "createdAt": "2023-07-01T00:00:00.000Z",
+    "createdBy": "admin@gmcpnalanda.com"
+  },
+  "CE": {
+    "id": "CE",
+    "name": "Civil Engineering",
+    "code": "CE",
+    "status": "active",
+    "semesters": [1, 2, 3, 4, 5, 6],
+    "createdAt": "2023-07-01T00:00:00.000Z",
+    "createdBy": "admin@gmcpnalanda.com"
+  },
+  "ME": {
+    "id": "ME",
+    "name": "Mechanical Engineering",
+    "code": "ME",
+    "status": "active",
+    "semesters": [1, 2, 3, 4, 5, 6],
+    "createdAt": "2023-07-01T00:00:00.000Z",
+    "createdBy": "admin@gmcpnalanda.com"
+  },
+  "EE": {
+    "id": "EE",
+    "name": "Electrical Engineering",
+    "code": "EE",
+    "status": "active",
+    "semesters": [1, 2, 3, 4, 5, 6],
+    "createdAt": "2023-07-01T00:00:00.000Z",
+    "createdBy": "admin@gmcpnalanda.com"
+  }
+}

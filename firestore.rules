@@ -1,0 +1,282 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function getUserRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && getUserRole() == 'admin';
+    }
+    
+    function isManagement() {
+      return isAuthenticated() && getUserRole() == 'management';
+    }
+    
+    function isTeacher() {
+      return isAuthenticated() && getUserRole() == 'teacher';
+    }
+    
+    function isStudent() {
+      return isAuthenticated() && getUserRole() == 'student';
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function hasValidEmail() {
+      return isAuthenticated() && request.auth.token.email.matches('.*@gmcpnalanda\\.com$');
+    }
+    
+    function isActiveUser() {
+      return isAuthenticated() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.active == true;
+    }
+    
+    // Users collection rules
+    match /users/{userId} {
+      // Only allow reads if user is authenticated with valid email and is active
+      allow read: if hasValidEmail() && isActiveUser() && (
+        isOwner(userId) ||  // Users can read their own data
+        isAdmin() ||        // Admins can read all user data
+        isManagement()      // Management can read all user data
+      );
+      
+      // Only admins and management can create new users
+      allow create: if hasValidEmail() && (isAdmin() || isManagement()) &&
+        // Validate required fields
+        request.resource.data.keys().hasAll(['email', 'name', 'role', 'active', 'createdAt', 'updatedAt']) &&
+        // Validate email domain
+        request.resource.data.email.matches('.*@gmcpnalanda\\.com$') &&
+        // Validate role
+        request.resource.data.role in ['student', 'teacher', 'management', 'admin'];
+      
+      // Users can update their own basic info, admins/management can update any user
+      allow update: if hasValidEmail() && isActiveUser() && (
+        (isOwner(userId) && 
+         // Students can only update specific fields
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'updatedAt']) &&
+         request.resource.data.role == resource.data.role) ||  // Can't change role
+        isAdmin() ||
+        isManagement()
+      );
+      
+      // Only admins can delete users
+      allow delete: if hasValidEmail() && isAdmin();
+    }
+    
+    // Student-specific data
+    match /students/{studentId} {
+      allow read: if hasValidEmail() && isActiveUser() && (
+        isOwner(studentId) ||
+        isAdmin() ||
+        isManagement() ||
+        (isTeacher() && 
+         // Teachers can read students from their subjects/branches
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.teacherData.branches.hasAny(
+           [resource.data.branch]
+         ))
+      );
+      
+      allow write: if hasValidEmail() && (isAdmin() || isManagement());
+    }
+    
+    // Teacher-specific data
+    match /teachers/{teacherId} {
+      allow read: if hasValidEmail() && isActiveUser() && (
+        isOwner(teacherId) ||
+        isAdmin() ||
+        isManagement()
+      );
+      
+      allow write: if hasValidEmail() && (isAdmin() || isManagement());
+    }
+    
+    // Courses collection
+    match /courses/{courseId} {
+      // All authenticated users can read courses
+      allow read: if hasValidEmail() && isActiveUser();
+      
+      // Only teachers can create/update courses for their subjects
+      allow create, update: if hasValidEmail() && (
+        isAdmin() ||
+        isManagement() ||
+        (isTeacher() && 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.teacherData.subjects.hasAny(
+           [request.resource.data.subject]
+         ))
+      );
+      
+      // Only admins/management can delete courses
+      allow delete: if hasValidEmail() && (isAdmin() || isManagement());
+    }
+    
+    // Assignments collection
+    match /assignments/{assignmentId} {
+      // Students can read assignments for their branch/year
+      // Teachers can read assignments they created
+      // Admins/Management can read all
+      allow read: if hasValidEmail() && isActiveUser() && (
+        isAdmin() ||
+        isManagement() ||
+        (isStudent() && 
+         resource.data.branch == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.studentData.branch &&
+         resource.data.year == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.studentData.year) ||
+        (isTeacher() && resource.data.createdBy == request.auth.uid)
+      );
+      
+      // Teachers can create assignments for their subjects
+      allow create: if hasValidEmail() && (
+        isAdmin() ||
+        isManagement() ||
+        (isTeacher() && 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.teacherData.subjects.hasAny(
+           [request.resource.data.subject]
+         ) &&
+         request.resource.data.createdBy == request.auth.uid)
+      );
+      
+      // Teachers can update their own assignments
+      allow update: if hasValidEmail() && (
+        isAdmin() ||
+        isManagement() ||
+        (isTeacher() && resource.data.createdBy == request.auth.uid)
+      );
+      
+      // Only admins/management can delete assignments
+      allow delete: if hasValidEmail() && (isAdmin() || isManagement());
+    }
+    
+    // Submissions collection
+    match /submissions/{submissionId} {
+      // Students can read their own submissions
+      // Teachers can read submissions for their assignments
+      // Admins/Management can read all
+      allow read: if hasValidEmail() && isActiveUser() && (
+        isAdmin() ||
+        isManagement() ||
+        (isStudent() && resource.data.studentId == request.auth.uid) ||
+        (isTeacher() && 
+         get(/databases/$(database)/documents/assignments/$(resource.data.assignmentId)).data.createdBy == request.auth.uid)
+      );
+      
+      // Students can create submissions for assignments assigned to them
+      allow create: if hasValidEmail() && isStudent() &&
+        request.resource.data.studentId == request.auth.uid &&
+        // Check if assignment exists and is for student's branch/year
+        exists(/databases/$(database)/documents/assignments/$(request.resource.data.assignmentId)) &&
+        get(/databases/$(database)/documents/assignments/$(request.resource.data.assignmentId)).data.branch == 
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.studentData.branch;
+      
+      // Students can update their own submissions (before deadline)
+      // Teachers can update submissions (for grading)
+      allow update: if hasValidEmail() && (
+        isAdmin() ||
+        isManagement() ||
+        (isStudent() && resource.data.studentId == request.auth.uid) ||
+        (isTeacher() && 
+         get(/databases/$(database)/documents/assignments/$(resource.data.assignmentId)).data.createdBy == request.auth.uid)
+      );
+      
+      // Only admins/management can delete submissions
+      allow delete: if hasValidEmail() && (isAdmin() || isManagement());
+    }
+    
+    // Attendance collection
+    match /attendance/{attendanceId} {
+      // Students can read their own attendance
+      // Teachers can read attendance for their subjects
+      // Admins/Management can read all
+      allow read: if hasValidEmail() && isActiveUser() && (
+        isAdmin() ||
+        isManagement() ||
+        (isStudent() && resource.data.studentId == request.auth.uid) ||
+        (isTeacher() && 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.teacherData.subjects.hasAny(
+           [resource.data.subject]
+         ))
+      );
+      
+      // Only teachers can mark attendance for their subjects
+      allow create, update: if hasValidEmail() && (
+        isAdmin() ||
+        isManagement() ||
+        (isTeacher() && 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.teacherData.subjects.hasAny(
+           [request.resource.data.subject]
+         ))
+      );
+      
+      // Only admins/management can delete attendance records
+      allow delete: if hasValidEmail() && (isAdmin() || isManagement());
+    }
+    
+    // Grades collection
+    match /grades/{gradeId} {
+      // Students can read their own grades
+      // Teachers can read/write grades for their subjects
+      // Admins/Management can read all grades
+      allow read: if hasValidEmail() && isActiveUser() && (
+        isAdmin() ||
+        isManagement() ||
+        (isStudent() && resource.data.studentId == request.auth.uid) ||
+        (isTeacher() && 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.teacherData.subjects.hasAny(
+           [resource.data.subject]
+         ))
+      );
+      
+      // Teachers can create/update grades for their subjects
+      allow create, update: if hasValidEmail() && (
+        isAdmin() ||
+        isManagement() ||
+        (isTeacher() && 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.teacherData.subjects.hasAny(
+           [request.resource.data.subject]
+         ))
+      );
+      
+      // Only admins/management can delete grades
+      allow delete: if hasValidEmail() && (isAdmin() || isManagement());
+    }
+    
+    // Notifications collection
+    match /notifications/{notificationId} {
+      // Users can read their own notifications
+      allow read: if hasValidEmail() && isActiveUser() && 
+        resource.data.userId == request.auth.uid;
+      
+      // Admins/Management/Teachers can create notifications
+      allow create: if hasValidEmail() && (
+        isAdmin() || 
+        isManagement() || 
+        isTeacher()
+      );
+      
+      // Users can update their own notifications (mark as read)
+      allow update: if hasValidEmail() && isActiveUser() && 
+        resource.data.userId == request.auth.uid &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read', 'readAt']);
+      
+      // Only admins/management can delete notifications
+      allow delete: if hasValidEmail() && (isAdmin() || isManagement());
+    }
+    
+    // System settings - only admins can access
+    match /settings/{document=**} {
+      allow read, write: if hasValidEmail() && isAdmin();
+    }
+    
+    // Audit logs - only admins can read
+    match /audit_logs/{document=**} {
+      allow read: if hasValidEmail() && isAdmin();
+      allow write: if false; // System only
+    }
+  }
+}

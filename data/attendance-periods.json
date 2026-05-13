@@ -1,0 +1,62 @@
+{
+  "P1": {
+    "id": "P1",
+    "name": "Period 1",
+    "startTime": "09:00",
+    "endTime": "10:00",
+    "order": 1,
+    "status": "active",
+    "createdAt": "2023-07-01T00:00:00.000Z",
+    "createdBy": "admin@gmcpnalanda.com"
+  },
+  "P2": {
+    "id": "P2",
+    "name": "Period 2",
+    "startTime": "10:00",
+    "endTime": "11:00",
+    "order": 2,
+    "status": "active",
+    "createdAt": "2023-07-01T00:00:00.000Z",
+    "createdBy": "admin@gmcpnalanda.com"
+  },
+  "P3": {
+    "id": "P3",
+    "name": "Period 3",
+    "startTime": "11:00",
+    "endTime": "12:00",
+    "order": 3,
+    "status": "active",
+    "createdAt": "2023-07-01T00:00:00.000Z",
+    "createdBy": "admin@gmcpnalanda.com"
+  },
+  "P4": {
+    "id": "P4",
+    "name": "Period 4",
+    "startTime": "13:00",
+    "endTime": "14:00",
+    "order": 4,
+    "status": "active",
+    "createdAt": "2023-07-01T00:00:00.000Z",
+    "createdBy": "admin@gmcpnalanda.com"
+  },
+  "P5": {
+    "id": "P5",
+    "name": "Period 5",
+    "startTime": "14:00",
+    "endTime": "15:00",
+    "order": 5,
+    "status": "active",
+    "createdAt": "2023-07-01T00:00:00.000Z",
+    "createdBy": "admin@gmcpnalanda.com"
+  },
+  "P6": {
+    "id": "P6",
+    "name": "Period 6",
+    "startTime": "15:00",
+    "endTime": "16:00",
+    "order": 6,
+    "status": "active",
+    "createdAt": "2023-07-01T00:00:00.000Z",
+    "createdBy": "admin@gmcpnalanda.com"
+  }
+}

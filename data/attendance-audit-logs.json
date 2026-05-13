@@ -1,0 +1,564 @@
+[
+  {
+    "id": "1766775934921",
+    "action": "CREATE_SUBJECT",
+    "details": {
+      "subjectId": "CSE_2025_2_CS102"
+    },
+    "userEmail": "admin@gmcpnalanda.com",
+    "timestamp": "2025-12-26T19:05:34.921Z"
+  },
+  {
+    "id": "1766777075672",
+    "action": "ENROLL_STUDENT",
+    "details": {
+      "studentEmail": "akarshan@gmcpnalanda.com",
+      "sessionId": "2025-2028",
+      "branchId": "CSE",
+      "semester": 1
+    },
+    "userEmail": "admin@gmcpnalanda.com",
+    "timestamp": "2025-12-26T19:24:35.672Z"
+  },
+  {
+    "id": "1766777109439",
+    "action": "ENROLL_STUDENT",
+    "details": {
+      "studentEmail": "akarshan@gmcpnalanda.com",
+      "sessionId": "2025-2028",
+      "branchId": "CE",
+      "semester": 1
+    },
+    "userEmail": "admin@gmcpnalanda.com",
+    "timestamp": "2025-12-26T19:25:09.439Z"
+  },
+  {
+    "id": "1766777127725",
+    "action": "ENROLL_STUDENT",
+    "details": {
+      "studentEmail": "rahul@gmcpnalanda.com",
+      "sessionId": "2023-2026",
+      "branchId": "ME",
+      "semester": 3
+    },
+    "userEmail": "admin@gmcpnalanda.com",
+    "timestamp": "2025-12-26T19:25:27.725Z"
+  },
+  {
+    "id": "1766777677843",
+    "action": "MARK_ATTENDANCE",
+    "details": {
+      "date": "2025-12-26",
+      "sessionId": "2025-2028",
+      "branchId": "CSE",
+      "semester": 1,
+      "periodId": "P1",
+      "subjectId": "CSE_2025_1_DS"
+    },
+    "userEmail": "kumar@gmcpnalanda.com",
+    "timestamp": "2025-12-26T19:34:37.843Z"
+  },
+  {
+    "id": "1767554660831",
+    "action": "AUTO_ENROLL_STUDENT",
+    "details": {
+      "studentEmail": "prachi@gmcpnalanda.com",
+      "studentId": "12345",
+      "studentName": "Kumar Uttchrist Sinha",
+      "sessionId": "2025-2028",
+      "branchId": "CE",
+      "semester": 3
+    },
+    "userEmail": "system",
+    "timestamp": "2026-01-04T19:24:20.832Z"
+  },
+  {
+    "id": "1767618812132",
+    "action": "DELETE_USER_CASCADE",
+    "details": {
+      "deletedUserEmail": "rohan@gmcpnalanda.com",
+      "enrollmentsDeleted": 0,
+      "recordsModified": 0,
+      "summariesDeleted": 0
+    },
+    "userEmail": "system",
+    "timestamp": "2026-01-05T13:13:32.132Z"
+  },
+  {
+    "id": "1767632496943",
+    "action": "DELETE_USER_CASCADE",
+    "details": {
+      "deletedUserEmail": "prachi@gmcpnalanda.com",
+      "enrollmentsDeleted": 1,
+      "recordsModified": 0,
+      "summariesDeleted": 0
+    },
+    "userEmail": "system",
+    "timestamp": "2026-01-05T17:01:36.943Z"
+  },
+  {
+    "id": "1767632496950",
+    "action": "DELETE_USER_CASCADE",
+    "details": {
+      "deletedUserEmail": "rohan@gmcpnalanda.com",
+      "enrollmentsDeleted": 0,
+      "recordsModified": 0,
+      "summariesDeleted": 0
+    },
+    "userEmail": "system",
+    "timestamp": "2026-01-05T17:01:36.950Z"
+  },
+  {
+    "id": "1767632496957",
+    "action": "DELETE_USER_CASCADE",
+    "details": {
+      "deletedUserEmail": "uttchrist@gmcpnalanda.com",
+      "enrollmentsDeleted": 0,
+      "recordsModified": 0,
+      "summariesDeleted": 0
+    },
+    "userEmail": "system",
+    "timestamp": "2026-01-05T17:01:36.957Z"
+  },
+  {
+    "id": "1767632880120",
+    "action": "AUTO_ENROLL_STUDENT",
+    "details": {
+      "studentEmail": "parineeta@gmcpnalanda.com",
+      "studentId": "252611",
+      "studentName": "Uttchrist Sinha",
+      "sessionId": "2025-2028",
+      "branchId": "CE",
+      "semester": 2
+    },
+    "userEmail": "system",
+    "timestamp": "2026-01-05T17:08:00.120Z"
+  },
+  {
+    "id": "1767634169538",
+    "action": "AUTO_ENROLL_STUDENT",
+    "details": {
+      "studentEmail": "ayush@gmcpnalanda.com",
+      "studentId": "120034",
+      "studentName": "ayush Kumar",
+      "sessionId": "2025-2028",
+      "branchId": "CE",
+      "semester": 3
+    },
+    "userEmail": "system",
+    "timestamp": "2026-01-05T17:29:29.538Z"
+  },
+  {
+    "id": "1767815039593",
+    "action": "AUTO_ENROLL_STUDENT",
+    "details": {
+      "studentEmail": "hello@gmcpnalanda.com",
+      "studentId": "1256",
+      "studentName": "hello world",
+      "sessionId": "2025-2028",
+      "branchId": "CE",
+      "semester": 1
+    },
+    "userEmail": "system",
+    "timestamp": "2026-01-07T19:43:59.593Z"
+  },
+  {
+    "id": "1767815226274",
+    "action": "CREATE_SUBJECT",
+    "details": {
+      "subjectId": "CE_2025_2_CE201"
+    },
+    "userEmail": "admin@gmcpnalanda.com",
+    "timestamp": "2026-01-07T19:47:06.274Z"
+  },
+  {
+    "id": "1767815254271",
+    "action": "MARK_ATTENDANCE",
+    "details": {
+      "date": "2026-01-07",
+      "sessionId": "2025-2028",
+      "branchId": "CE",
+      "semester": 2,
+      "periodId": "P1",
+      "subjectId": "CE_2025_2_CE201"
+    },
+    "userEmail": "mukesh@gmcpnalanda.com",
+    "timestamp": "2026-01-07T19:47:34.271Z"
+  },
+  {
+    "id": "1767892081347",
+    "action": "AUTO_ENROLL_STUDENT",
+    "details": {
+      "studentEmail": "ganesh@gmcpnalanda.com",
+      "studentId": "54321",
+      "studentName": "GANESH KUMAR",
+      "sessionId": "2025-2028",
+      "branchId": "CE",
+      "semester": 2
+    },
+    "userEmail": "system",
+    "timestamp": "2026-01-08T17:08:01.347Z"
+  },
+  {
+    "id": "1767892816259",
+    "action": "AUTO_ENROLL_STUDENT",
+    "details": {
+      "studentEmail": "mohan@gmcpnalanda.com",
+      "studentId": "296754",
+      "studentName": "Mohan kumar",
+      "sessionId": "2025-2028",
+      "branchId": "CE",
+      "semester": 2
+    },
+    "userEmail": "system",
+    "timestamp": "2026-01-08T17:20:16.259Z"
+  },
+  {
+    "id": "1767893492599",
+    "action": "AUTO_ENROLL_STUDENT",
+    "details": {
+      "studentEmail": "richa@gmcpnalanda.com",
+      "studentId": "956734",
+      "studentName": "ANVESH KUMAR",
+      "sessionId": "2025-2028",
+      "branchId": "CE",
+      "semester": 2
+    },
+    "userEmail": "system",
+    "timestamp": "2026-01-08T17:31:32.599Z"
+  },
+  {
+    "id": "1767895058595",
+    "action": "MARK_ATTENDANCE",
+    "details": {
+      "date": "2026-01-07",
+      "sessionId": "2025-2028",
+      "branchId": "CE",
+      "semester": 2,
+      "periodId": "P1",
+      "subjectId": "CE_2025_2_CE201"
+    },
+    "userEmail": "mukesh@gmcpnalanda.com",
+    "timestamp": "2026-01-08T17:57:38.595Z"
+  },
+  {
+    "id": "1767904236129",
+    "action": "MARK_ATTENDANCE",
+    "details": {
+      "date": "2026-01-09",
+      "sessionId": "2025-2028",
+      "branchId": "CE",
+      "semester": 2,
+      "periodId": "P1",
+      "subjectId": "CE_2025_2_CE201"
+    },
+    "userEmail": "mukesh@gmcpnalanda.com",
+    "timestamp": "2026-01-08T20:30:36.129Z"
+  },
+  {
+    "id": "1767904438844",
+    "action": "MARK_ATTENDANCE",
+    "details": {
+      "date": "2026-01-10",
+      "sessionId": "2025-2028",
+      "branchId": "CE",
+      "semester": 2,
+      "periodId": "P2",
+      "subjectId": "CE_2025_2_CE201"
+    },
+    "userEmail": "mukesh@gmcpnalanda.com",
+    "timestamp": "2026-01-08T20:33:58.844Z"
+  },
+  {
+    "id": "1767909404462",
+    "action": "MARK_ATTENDANCE",
+    "details": {
+      "date": "2026-01-10",
+      "sessionId": "2025-2028",
+      "branchId": "CE",
+      "semester": 2,
+      "periodId": "P2",
+      "subjectId": "CE_2025_2_CE201"
+    },
+    "userEmail": "mukesh@gmcpnalanda.com",
+    "timestamp": "2026-01-08T21:56:44.462Z"
+  },
+  {
+    "id": "1767909955011",
+    "action": "MARK_ATTENDANCE",
+    "details": {
+      "date": "2026-01-08",
+      "sessionId": "2025-2028",
+      "branchId": "CE",
+      "semester": 2,
+      "periodId": "P1",
+      "subjectId": "CE_2025_2_CE201"
+    },
+    "userEmail": "mukesh@gmcpnalanda.com",
+    "timestamp": "2026-01-08T22:05:55.011Z"
+  },
+  {
+    "id": "1767910017099",
+    "action": "MARK_ATTENDANCE",
+    "details": {
+      "date": "2026-01-08",
+      "sessionId": "2025-2028",
+      "branchId": "CE",
+      "semester": 2,
+      "periodId": "P1",
+      "subjectId": "CE_2025_2_CE201"
+    },
+    "userEmail": "mukesh@gmcpnalanda.com",
+    "timestamp": "2026-01-08T22:06:57.099Z"
+  },
+  {
+    "id": "1767910900597",
+    "action": "MARK_ATTENDANCE",
+    "details": {
+      "date": "2026-01-08",
+      "sessionId": "2025-2028",
+      "branchId": "CE",
+      "semester": 2,
+      "periodId": "P1",
+      "subjectId": "CE_2025_2_CE201"
+    },
+    "userEmail": "mukesh@gmcpnalanda.com",
+    "timestamp": "2026-01-08T22:21:40.597Z"
+  },
+  {
+    "id": "1767910902859",
+    "action": "MARK_ATTENDANCE",
+    "details": {
+      "date": "2026-01-08",
+      "sessionId": "2025-2028",
+      "branchId": "CE",
+      "semester": 2,
+      "periodId": "P3",
+      "subjectId": "CE_2025_2_CE201"
+    },
+    "userEmail": "mukesh@gmcpnalanda.com",
+    "timestamp": "2026-01-08T22:21:42.859Z"
+  },
+  {
+    "id": "1767962710186",
+    "action": "MARK_ATTENDANCE",
+    "details": {
+      "date": "2026-01-09",
+      "sessionId": "2025-2028",
+      "branchId": "CE",
+      "semester": 2,
+      "periodId": "P1",
+      "subjectId": "CE_2025_2_CE201"
+    },
+    "userEmail": "mukesh@gmcpnalanda.com",
+    "timestamp": "2026-01-09T12:45:10.187Z"
+  },
+  {
+    "id": "1767962787248",
+    "action": "MARK_ATTENDANCE",
+    "details": {
+      "date": "2026-01-09",
+      "sessionId": "2025-2028",
+      "branchId": "CE",
+      "semester": 2,
+      "periodId": "P2",
+      "subjectId": "CE_2025_2_CE201"
+    },
+    "userEmail": "mukesh@gmcpnalanda.com",
+    "timestamp": "2026-01-09T12:46:27.248Z"
+  },
+  {
+    "id": "1767962832616",
+    "action": "MARK_ATTENDANCE",
+    "details": {
+      "date": "2026-01-09",
+      "sessionId": "2025-2028",
+      "branchId": "CE",
+      "semester": 2,
+      "periodId": "P3",
+      "subjectId": "CE_2025_2_CE201"
+    },
+    "userEmail": "mukesh@gmcpnalanda.com",
+    "timestamp": "2026-01-09T12:47:12.616Z"
+  },
+  {
+    "id": "1767970275356",
+    "action": "MARK_ATTENDANCE",
+    "details": {
+      "date": "2026-01-09",
+      "sessionId": "2025-2028",
+      "branchId": "CE",
+      "semester": 2,
+      "periodId": "P4",
+      "subjectId": "CE_2025_2_CE201"
+    },
+    "userEmail": "mukesh@gmcpnalanda.com",
+    "timestamp": "2026-01-09T14:51:15.356Z"
+  },
+  {
+    "id": "1767970301187",
+    "action": "MARK_ATTENDANCE",
+    "details": {
+      "date": "2026-01-09",
+      "sessionId": "2025-2028",
+      "branchId": "CE",
+      "semester": 2,
+      "periodId": "P5",
+      "subjectId": "CE_2025_2_CE201"
+    },
+    "userEmail": "mukesh@gmcpnalanda.com",
+    "timestamp": "2026-01-09T14:51:41.187Z"
+  },
+  {
+    "id": "1767970350468",
+    "action": "MARK_ATTENDANCE",
+    "details": {
+      "date": "2026-01-09",
+      "sessionId": "2025-2028",
+      "branchId": "CE",
+      "semester": 2,
+      "periodId": "P6",
+      "subjectId": "CE_2025_2_CE201"
+    },
+    "userEmail": "mukesh@gmcpnalanda.com",
+    "timestamp": "2026-01-09T14:52:30.468Z"
+  },
+  {
+    "id": "1768481464267",
+    "action": "MARK_ATTENDANCE",
+    "details": {
+      "date": "2026-01-15",
+      "sessionId": "2025-2028",
+      "branchId": "CE",
+      "semester": 2,
+      "periodId": "P1",
+      "subjectId": "CE_2025_2_CE201"
+    },
+    "userEmail": "mukesh@gmcpnalanda.com",
+    "timestamp": "2026-01-15T12:51:04.267Z"
+  },
+  {
+    "id": "1768756940469",
+    "action": "MARK_ATTENDANCE",
+    "details": {
+      "date": "2026-01-18",
+      "sessionId": "2025-2028",
+      "branchId": "CE",
+      "semester": 2,
+      "periodId": "P1",
+      "subjectId": "CE_2025_2_CE201"
+    },
+    "userEmail": "mukesh@gmcpnalanda.com",
+    "timestamp": "2026-01-18T17:22:20.469Z"
+  },
+  {
+    "id": "1768757212856",
+    "action": "CREATE_SUBJECT",
+    "details": {
+      "subjectId": "ME_2023_3_CS101"
+    },
+    "userEmail": "admin@gmcpnalanda.com",
+    "timestamp": "2026-01-18T17:26:52.856Z"
+  },
+  {
+    "id": "1769533367600",
+    "action": "MARK_ATTENDANCE",
+    "details": {
+      "date": "2026-01-27",
+      "sessionId": "2025-2028",
+      "branchId": "CE",
+      "semester": 2,
+      "periodId": "P1",
+      "subjectId": "CE_2025_2_CE201"
+    },
+    "userEmail": "mukesh@gmcpnalanda.com",
+    "timestamp": "2026-01-27T17:02:47.600Z"
+  },
+  {
+    "id": "1769535874833",
+    "action": "LOCK_ATTENDANCE",
+    "details": {
+      "recordId": "2026-01-27_2025-2028_CE_2_P1_CE_2025_2_CE201"
+    },
+    "userEmail": "admin@gmcpnalanda.com",
+    "timestamp": "2026-01-27T17:44:34.833Z"
+  },
+  {
+    "id": "1772134962569",
+    "action": "DELETE_ENROLLMENT",
+    "details": {
+      "enrollmentId": "parineeta@gmcpnalanda.com_2025-2028_CE_2",
+      "studentEmail": "parineeta@gmcpnalanda.com",
+      "sessionId": "2025-2028",
+      "branchId": "CE",
+      "semester": 2
+    },
+    "userEmail": "admin",
+    "timestamp": "2026-02-26T19:42:42.569Z"
+  },
+  {
+    "id": "1772134967685",
+    "action": "DELETE_ENROLLMENT",
+    "details": {
+      "enrollmentId": "ayush@gmcpnalanda.com_2025-2028_CE_3",
+      "studentEmail": "ayush@gmcpnalanda.com",
+      "sessionId": "2025-2028",
+      "branchId": "CE",
+      "semester": 3
+    },
+    "userEmail": "admin",
+    "timestamp": "2026-02-26T19:42:47.685Z"
+  },
+  {
+    "id": "1772134971542",
+    "action": "DELETE_ENROLLMENT",
+    "details": {
+      "enrollmentId": "hello@gmcpnalanda.com_2025-2028_CE_1",
+      "studentEmail": "hello@gmcpnalanda.com",
+      "sessionId": "2025-2028",
+      "branchId": "CE",
+      "semester": 1
+    },
+    "userEmail": "admin",
+    "timestamp": "2026-02-26T19:42:51.542Z"
+  },
+  {
+    "id": "1772134975230",
+    "action": "DELETE_ENROLLMENT",
+    "details": {
+      "enrollmentId": "ganesh@gmcpnalanda.com_2025-2028_CE_2",
+      "studentEmail": "ganesh@gmcpnalanda.com",
+      "sessionId": "2025-2028",
+      "branchId": "CE",
+      "semester": 2
+    },
+    "userEmail": "admin",
+    "timestamp": "2026-02-26T19:42:55.230Z"
+  },
+  {
+    "id": "1772134980370",
+    "action": "DELETE_ENROLLMENT",
+    "details": {
+      "enrollmentId": "mohan@gmcpnalanda.com_2025-2028_CE_2",
+      "studentEmail": "mohan@gmcpnalanda.com",
+      "sessionId": "2025-2028",
+      "branchId": "CE",
+      "semester": 2
+    },
+    "userEmail": "admin",
+    "timestamp": "2026-02-26T19:43:00.370Z"
+  },
+  {
+    "id": "1772134984054",
+    "action": "DELETE_ENROLLMENT",
+    "details": {
+      "enrollmentId": "richa@gmcpnalanda.com_2025-2028_CE_2",
+      "studentEmail": "richa@gmcpnalanda.com",
+      "sessionId": "2025-2028",
+      "branchId": "CE",
+      "semester": 2
+    },
+    "userEmail": "admin",
+    "timestamp": "2026-02-26T19:43:04.054Z"
+  }
+]

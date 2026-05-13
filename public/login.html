@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GMCP LMS - Login</title>
+    <link rel="icon" type="image/jpeg" href="images/logo.jpg">
+    <link rel="stylesheet" href="css/common.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo-section img {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 15px;
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .logo-section h1 {
+            color: #333;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-section p {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .institute-name {
+            color: #999;
+            font-size: 14px;
+            font-style: italic;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            cursor: pointer;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .info-section {
+            background: linear-gradient(135deg, #f0fff4 0%, #e8f5e8 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+            border: 1px solid #d4edda;
+            text-align: center;
+        }
+        
+        .info-section h3 {
+            color: #155724;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .info-section p {
+            color: #155724;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .features-list {
+            display: grid;
+            gap: 10px;
+            text-align: left;
+        }
+        
+        .feature-item {
+            color: #28a745;
+            font-size: 14px;
+            padding: 8px 12px;
+            background: rgba(40, 167, 69, 0.1);
+            border-radius: 8px;
+        }
+
+        .test-accounts-section h3 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 18px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .test-accounts-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .test-account-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .test-account-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.2);
+        }
+
+        .test-account-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .test-account-card:hover::before {
+            opacity: 1;
+        }
+
+        .account-role {
+            display: inline-block;
+            padding: 4px 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .account-email {
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .account-name {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .account-description {
+            color: #999;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .footer-section {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #eee;
+        }
+
+        .footer-links {
+            margin-bottom: 15px;
+        }
+
+        .footer-links a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            margin: 0 15px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #764ba2;
+        }
+
+        .footer-text {
+            color: #666;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .help-section {
+            background: #e8f4fd;
+            border-left: 4px solid #0066cc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .help-section h4 {
+            color: #0066cc;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .help-section p {
+            color: #333;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .help-section a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+
+        @media (max-width: 600px) {
+            .login-container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+            
+            .logo-section h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <!-- Logo Section -->
+        <div class="logo-section">
+            <img src="images/logo.jpg" alt="GMCP Logo">
+            <h1>GMCP LMS</h1>
+            <p>Learning Management System</p>
+            <div class="institute-name">Ganga Memorial College of Polytechnic, Harnaut, Nalanda</div>
+        </div>
+
+        <!-- Login Form -->
+        <div class="form-section">
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email / Student ID / Employee ID</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="email" name="email" required 
+                               placeholder="email@gmcpnalanda.com or your ID"
+                               autocomplete="email">
+                        <span class="input-icon">📧</span>
+                    </div>
+                    <small style="color: #666; font-size: 12px; margin-top: 5px; display: block;">
+                        Enter your email, Student ID, or Employee ID
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="password" name="password" required 
+                               placeholder="Enter your password"
+                               autocomplete="current-password">
+                        <span class="input-icon" id="togglePassword" onclick="togglePasswordVisibility()">👁️</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="login-btn" id="loginBtn">
+                    Sign In to Portal
+                </button>
+
+                <div id="messageContainer"></div>
+            </form>
+        </div>
+
+        <!-- Information Section -->
+        <div class="info-section">
+            <h3>🎓 Welcome to GMCP LMS</h3>
+            <p>Please use your institutional credentials to access the Learning Management System. If you don't have an account, please contact the administration office.</p>
+            <div class="features-list">
+                <div class="feature-item">📚 Access your courses and assignments</div>
+                <div class="feature-item">📊 Track your academic progress</div>
+                <div class="feature-item">📅 View attendance and schedules</div>
+                <div class="feature-item">👥 Connect with faculty and peers</div>
+            </div>
+        </div>
+
+        <!-- Help Section -->
+        <div class="help-section">
+            <h4>Need Help?</h4>
+            <p><strong>Forgot Password:</strong> Contact your system administrator</p>
+            <p><strong>Account Issues:</strong> Email <a href="mailto:admin@gmcpnalanda.com">admin@gmcpnalanda.com</a></p>
+            <p><strong>Technical Support:</strong> Call +91-XXXX-XXXXXX during office hours</p>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer-section">
+            <div class="footer-links">
+                <a href="#" onclick="showAbout()">About GMCP</a>
+                <a href="#" onclick="showPrivacy()">Privacy Policy</a>
+                <a href="#" onclick="showHelp()">Help</a>
+            </div>
+            <div class="footer-text">
+                © 2025 Ganga Memorial College of Polytechnic, Harnaut, Nalanda<br>
+                Powered by GMCP LMS v1.0
+            </div>
+        </div>
+    </div>
+
+    <!-- Include user management and authentication utilities -->
+    <script src="js/userManager.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+
+        // Toggle password visibility
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('togglePassword');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.textContent = '👁️';
+            }
+        }
+
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const loginBtn = document.getElementById('loginBtn');
+            const originalText = loginBtn.innerHTML;
+            
+            // Show loading
+            showLoading(loginBtn, 'Signing In...');
+            
+            try {
+                // Attempt login
+                const result = await authManager.login(email, password);
+                
+                if (result.success) {
+                    // Check if password reset is required
+                    if (result.requirePasswordReset) {
+                        showMessage(`Welcome, ${result.user.name}! You must change your password before continuing...`, 'warning');
+                        
+                        // Redirect to change password page after short delay
+                        setTimeout(() => {
+                            const userParam = encodeURIComponent(JSON.stringify(result.user));
+                            window.location.href = `change-password.html?user=${userParam}`;
+                        }, 1500);
+                    } else {
+                        showMessage(`Welcome, ${result.user.name}! Redirecting to your ${result.user.role} portal...`, 'success');
+                        
+                        // Check for redirect parameter in URL
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const redirectTo = urlParams.get('redirect');
+                        let targetUrl = result.redirectUrl;
+                        
+                        // If there's a redirect parameter, use it (with validation)
+                        if (redirectTo) {
+                            const validRedirects = ['admin-portal', 'student-portal', 'faculty-portal', 'management-portal'];
+                            if (validRedirects.includes(redirectTo)) {
+                                targetUrl = redirectTo + '.html';
+                            }
+                        }
+                        
+                        // Redirect after short delay
+                        setTimeout(() => {
+                            window.location.href = targetUrl;
+                        }, 1500);
+                    }
+                } else if (result.canForceLogin) {
+                    // Handle duplicate session - show force login option
+                    hideLoading(loginBtn, originalText);
+                    showDuplicateSessionDialog(email, password, result.error);
+                } else {
+                    showMessage(result.error, 'error');
+                    hideLoading(loginBtn, originalText);
+                }
+            } catch (error) {
+                showMessage('Login failed. Please try again.', 'error');
+                hideLoading(loginBtn, originalText);
+            }
+        });
+
+        // Handle duplicate session dialog
+        function showDuplicateSessionDialog(email, password, errorMessage) {
+            const dialogHtml = `
+                <div id="duplicateSessionDialog" style="
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.5);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 1000;
+                ">
+                    <div style="
+                        background: white;
+                        border-radius: 15px;
+                        padding: 30px;
+                        max-width: 500px;
+                        margin: 20px;
+                        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                    ">
+                        <h3 style="margin-bottom: 15px; color: #e74c3c;">⚠️ Already Logged In</h3>
+                        <p style="margin-bottom: 20px; line-height: 1.6; color: #555;">
+                            ${errorMessage}
+                        </p>
+                        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                            <button id="cancelForceLogin" style="
+                                padding: 10px 20px;
+                                border: 1px solid #ddd;
+                                background: white;
+                                border-radius: 6px;
+                                cursor: pointer;
+                            ">Cancel</button>
+                            <button id="confirmForceLogin" style="
+                                padding: 10px 20px;
+                                border: none;
+                                background: #e74c3c;
+                                color: white;
+                                border-radius: 6px;
+                                cursor: pointer;
+                            ">Login Anyway</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', dialogHtml);
+            
+            // Handle dialog buttons
+            document.getElementById('cancelForceLogin').onclick = () => {
+                document.getElementById('duplicateSessionDialog').remove();
+            };
+            
+            document.getElementById('confirmForceLogin').onclick = async () => {
+                document.getElementById('duplicateSessionDialog').remove();
+                
+                const loginBtn = document.getElementById('loginBtn');
+                showLoading(loginBtn, 'Logging in...');
+                
+                try {
+                    const forceResult = await authManager.forceLogin(email, password);
+                    
+                    if (forceResult.success) {
+                        showMessage(`Welcome, ${forceResult.user.name}! Redirecting...`, 'success');
+                        setTimeout(() => {
+                            window.location.href = forceResult.redirectUrl;
+                        }, 1500);
+                    } else {
+                        showMessage(forceResult.error, 'error');
+                        hideLoading(loginBtn, 'Sign In to Portal');
+                    }
+                } catch (error) {
+                    showMessage('Force login failed. Please try again.', 'error');
+                    hideLoading(loginBtn, 'Sign In to Portal');
+                }
+            };
+        }
+
+        // Check if user is already logged in
+        window.addEventListener('load', () => {
+            // Only clear session if user explicitly logged out or session is invalid
+            // Don't clear if coming from a redirect (to allow proper redirect after login)
+            const urlParams = new URLSearchParams(window.location.search);
+            const hasRedirect = urlParams.has('redirect');
+            
+            if (!hasRedirect) {
+                // Only clear session data if not redirected here (i.e. user came here directly)
+                const sessionData = localStorage.getItem('gmcp_lms_user');
+                if (sessionData) {
+                    try {
+                        const data = JSON.parse(sessionData);
+                        // If session is expired, clear it
+                        if (new Date() >= new Date(data.expiresAt)) {
+                            localStorage.removeItem('gmcp_lms_user');
+                            authManager.currentUser = null;
+                        }
+                    } catch (e) {
+                        localStorage.removeItem('gmcp_lms_user');
+                        authManager.currentUser = null;
+                    }
+                }
+            }
+        });
+
+        // Modal functions for footer links
+        function showAbout() {
+            alert('Ganga Memorial College of Polytechnic, Harnaut, Nalanda\\n\\nA leading educational institution committed to excellence in higher education and research.\\n\\nEstablished: 1985\\nLocation: Harnaut, Nalanda, Bihar\\nWebsite: www.gmcpnalanda.edu.in');
+        }
+
+        function showPrivacy() {
+            alert('Privacy Policy\n\n• Your login credentials are securely encrypted\n• Personal information is protected according to data protection laws\n• Access logs are maintained for security purposes\n• No personal data is shared with third parties\n\nFor detailed privacy policy, contact administration.');
+        }
+
+        function showHelp() {
+            alert('Login Help\n\n1. Enter your institute email (@gmcpnalanda.com)\n2. Enter your password\n3. Click Sign In\n\nFor password reset or account issues:\n• Contact your department head\n• Email: admin@gmcpnalanda.com\n• Call: +91-XXXX-XXXXXX\n\nOffice Hours: 9:00 AM - 5:00 PM (Mon-Sat)');
+        }
+
+        // Enhanced form validation
+        document.getElementById('email').addEventListener('blur', function() {
+            const email = this.value.trim();
+            if (email && !authManager.isValidEmail(email)) {
+                this.style.borderColor = '#d63031';
+                showMessage('Please enter a valid @gmcpnalanda.com email address', 'error');
+            } else if (email) {
+                this.style.borderColor = '#00b894';
+            }
+        });
+
+        // Enter key support for password field
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+            }
+        });
+    </script>
+</body>
+</html>

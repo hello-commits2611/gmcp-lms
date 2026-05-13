@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Management Portal - GMCP LMS</title>
+    <link rel="icon" type="image/jpeg" href="images/logo.jpg">
+    <link rel="stylesheet" href="css/common.css">
+    <style>
+        body { background: #f8f9fa; min-height: 100vh; }
+        .header { background: linear-gradient(135deg, #0066cc 0%, #764ba2 100%); color: white; padding: 20px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header-content { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .header-left img { width: 50px; height: 50px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.3); }
+        .header-text h1 { font-size: 24px; margin-bottom: 5px; }
+        .header-text .subtitle { font-size: 14px; opacity: 0.9; }
+        .header-right { display: flex; align-items: center; gap: 20px; }
+        .logout-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+        .navigation { background: white; border-bottom: 1px solid #dee2e6; }
+        .nav-content { max-width: 1200px; margin: 0 auto; display: flex; padding: 0 20px; }
+        .nav-item { padding: 15px 20px; cursor: pointer; border-bottom: 3px solid transparent; transition: all .3s ease; font-weight: 500; }
+        .nav-item:hover { background: #f8f9fa; color: #0066cc; }
+        .nav-item.active { border-bottom-color: #0066cc; color: #0066cc; background: #f8f9fa; }
+        .main-content { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+        .page-section { display: none; }
+        .page-section.active { display: block; }
+        .stat-card::before { content: ''; position: absolute; top:0; left:0; right:0; height:4px; background: linear-gradient(135deg, #0066cc 0%, #764ba2 100%); }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px,1fr)); gap:20px; margin-bottom: 30px; }
+        .stat-card { background: white; border-radius: 12px; padding: 25px; text-align: center; border: 1px solid #e9ecef; position: relative; overflow: hidden; }
+        .stat-value { font-size: 32px; font-weight: 700; color: #333; margin-bottom: 5px; }
+        .stat-label { font-size: 14px; color: #666; text-transform: uppercase; letter-spacing: .5px; }
+        .grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        @media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
+        .kpi-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+        .report-card { background: white; border-radius: 12px; padding: 20px; border: 1px solid #e9ecef; }
+        .filter-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 15px; }
+        .action-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <img src="images/logo.jpg" alt="GMCP Logo">
+                <div class="header-text">
+                    <h1>Management Portal</h1>
+                    <div class="subtitle">Institution oversight, analytics, and reporting</div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <div class="user-name" id="userName">Loading...</div>
+                    <div class="user-role" id="userRole">Management</div>
+                </div>
+                <button class="logout-btn" onclick="authManager.logout()">🚪 Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <nav class="navigation">
+        <div class="nav-content">
+            <div class="nav-item active" onclick="showSection('profile')">👤 My Profile</div>
+            <div class="nav-item" onclick="showSection('hostel')">🏠 Hostel Management</div>
+            <div class="nav-item" onclick="showSection('feedback')">💬 Feedback Section</div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <section id="dashboard" class="page-section active">
+            <h2 class="mb-4">Institute Overview</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalStudents">1,240</div>
+                    <div class="stat-label">Total Students</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalTeachers">85</div>
+                    <div class="stat-label">Total Faculty</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="activeCourses">42</div>
+                    <div class="stat-label">Active Courses</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="systemHealth">99.9%</div>
+                    <div class="stat-label">System Uptime</div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header"><div class="card-title">Academic KPIs</div></div>
+                    <div class="card-body">
+                        <div class="kpi-item">
+                            <span>Average Attendance</span>
+                            <strong class="text-success">87%</strong>
+                        </div>
+                        <div class="kpi-item">
+                            <span>Average GPA (Current Sem)</span>
+                            <strong class="text-success">7.4</strong>
+                        </div>
+                        <div class="kpi-item">
+                            <span>On-time Submissions</span>
+                            <strong class="text-success">91%</strong>
+                        </div>
+                        <div class="kpi-item">
+                            <span>Assignments Pending Grading</span>
+                            <strong class="text-warning">36</strong>
+                        </div>
+                        <div class="kpi-item">
+                            <span>Low Attendance Alerts</span>
+                            <strong class="text-danger">18</strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><div class="card-title">Recent System Activity</div></div>
+                    <div class="card-body">
+                        <div class="detail-row"><span>New student registrations (24h)</span><span>22</span></div>
+                        <div class="detail-row"><span>Assignments created (24h)</span><span>12</span></div>
+                        <div class="detail-row"><span>Grades posted (24h)</span><span>48</span></div>
+                        <div class="detail-row"><span>Logins today</span><span>638</span></div>
+                        <div class="detail-row"><span>Failed login attempts</span><span class="text-danger">7</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="analytics" class="page-section">
+            <h2 class="mb-4">Analytics</h2>
+            <div class="card">
+                <div class="card-header"><div class="card-title">Filters</div></div>
+                <div class="card-body">
+                    <div class="filter-row">
+                        <select class="form-control form-select"><option>All Programs</option><option>BCA</option><option>BSc</option><option>MCA</option></select>
+                        <select class="form-control form-select"><option>All Years</option><option>Year 1</option><option>Year 2</option><option>Year 3</option></select>
+                        <select class="form-control form-select"><option>Semester</option><option>Sem I</option><option>Sem II</option><option>Sem III</option><option>Sem IV</option></select>
+                        <select class="form-control form-select"><option>Department</option><option>Computer Science</option><option>Mathematics</option><option>Humanities</option></select>
+                    </div>
+                    <div class="action-row">
+                        <button class="btn btn-primary btn-sm" onclick="showMessage('Analytics refreshed', 'success')">🔄 Refresh</button>
+                        <button class="btn btn-light btn-sm">📥 Export CSV</button>
+                        <button class="btn btn-light btn-sm">🖨️ Print</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-6">
+                    <div class="card">
+                        <div class="card-header"><div class="card-title">Attendance by Program</div></div>
+                        <div class="card-body">
+                            <div class="detail-row"><span>BCA</span><span>88%</span></div>
+                            <div class="detail-row"><span>BSc</span><span>85%</span></div>
+                            <div class="detail-row"><span>MCA</span><span>90%</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="card">
+                        <div class="card-header"><div class="card-title">Average GPA by Program</div></div>
+                        <div class="card-body">
+                            <div class="detail-row"><span>BCA</span><span>7.5</span></div>
+                            <div class="detail-row"><span>BSc</span><span>7.1</span></div>
+                            <div class="detail-row"><span>MCA</span><span>7.9</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="reports" class="page-section">
+            <h2 class="mb-4">Reports</h2>
+            <div class="report-card">
+                <div class="filter-row">
+                    <select class="form-control form-select"><option>Report Type</option><option>Attendance Summary</option><option>Grade Distribution</option><option>Performance Alerts</option><option>Faculty Load</option></select>
+                    <select class="form-control form-select"><option>Time Period</option><option>This Month</option><option>Last Month</option><option>This Semester</option><option>Last Semester</option></select>
+                    <select class="form-control form-select"><option>Grouping</option><option>By Program</option><option>By Year</option><option>By Section</option><option>By Teacher</option></select>
+                </div>
+                <div class="action-row">
+                    <button class="btn btn-primary">📄 Generate Report</button>
+                    <button class="btn btn-light">📥 Download PDF</button>
+                    <button class="btn btn-light">📤 Share</button>
+                </div>
+                <div class="mt-4 text-muted">Generated reports will appear here for preview.</div>
+            </div>
+        </section>
+
+        <section id="activity" class="page-section">
+            <h2 class="mb-4">System Activity</h2>
+            <div class="card">
+                <div class="card-header"><div class="card-title">Recent Events</div></div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead><tr><th>Time</th><th>User</th><th>Event</th><th>Details</th></tr></thead>
+                        <tbody>
+                            <tr><td>10:12 AM</td><td>admin@gmcp...</td><td>USER_CREATE</td><td>Created student account for john.doe@gmcp...</td></tr>
+                            <tr><td>09:58 AM</td><td>prof.smith@gmcp...</td><td>ASSIGNMENT_CREATE</td><td>New assignment for BCA-I-A</td></tr>
+                            <tr><td>09:30 AM</td><td>principal@gmcp...</td><td>REPORT_DOWNLOAD</td><td>Attendance summary (This Month)</td></tr>
+                            <tr><td>09:02 AM</td><td>jane.smith@gmcp...</td><td>LOGIN</td><td>Successful login</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="profile" class="page-section">
+            <h2 class="mb-4">My Profile</h2>
+            <div class="card">
+                <div class="card-body">
+                    <div class="detail-row"><span>Name</span><span id="detailName">Dr. Principal Singh</span></div>
+                    <div class="detail-row"><span>Email</span><span id="detailEmail">principal@gmcpnalanda.com</span></div>
+                    <div class="detail-row"><span>Designation</span><span id="detailDesignation">Principal</span></div>
+                    <div class="detail-row"><span>Department</span><span id="detailDepartment">Management</span></div>
+                    <div class="detail-row"><span>Employee ID</span><span id="detailEmployeeId">MNG001</span></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/auth.js"></script>
+    <script>
+        if (!authManager.requireAnyRole(['management','admin'])) { }
+        const u = authManager.getCurrentUser();
+        if (u) {
+            document.getElementById('userName').textContent = u.name;
+            document.getElementById('userRole').textContent = u.designation ? `${u.designation}` : (u.role === 'admin' ? 'Admin' : 'Management');
+            document.getElementById('detailName').textContent = u.name || '';
+            document.getElementById('detailEmail').textContent = u.email || '';
+            document.getElementById('detailDesignation').textContent = u.designation || (u.role === 'admin' ? 'Administrator' : 'Management');
+            document.getElementById('detailDepartment').textContent = u.department || 'Management';
+            document.getElementById('detailEmployeeId').textContent = u.employeeId || '-';
+        }
+        function showSection(id){ document.querySelectorAll('.page-section').forEach(s=>s.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); document.getElementById(id).classList.add('active'); event.target.classList.add('active'); }
+    </script>
+</body>
+</html>

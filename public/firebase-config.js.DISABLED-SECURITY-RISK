@@ -1,0 +1,301 @@
+// Firebase Configuration for Role-Based LMS System
+import { initializeApp } from 'firebase/app';
+import { 
+    getAuth, 
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged,
+    sendPasswordResetEmail
+} from 'firebase/auth';
+import { 
+    getFirestore, 
+    doc, 
+    getDoc, 
+    setDoc, 
+    updateDoc, 
+    deleteDoc,
+    collection,
+    getDocs,
+    query,
+    where,
+    orderBy,
+    addDoc,
+    serverTimestamp
+} from 'firebase/firestore';
+
+// Your existing Firebase configuration (automatically configured)
+const firebaseConfig = {
+    // Using your existing Firebase project: admission-form-2025
+    // Note: You'll need to add the frontend web app keys from Firebase Console
+    apiKey: "AIzaSyDXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", // Replace with your actual web API key
+    authDomain: "admission-form-2025.firebaseapp.com",
+    projectId: "admission-form-2025",
+    storageBucket: "admission-form-2025.firebasestorage.app",
+    messagingSenderId: "106244268549974542386", // From your service account
+    appId: "1:106244268549974542386:web:XXXXXXXXXXXXXXXXX" // Replace with your actual web app ID
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Domain restriction
+const ALLOWED_DOMAIN = '@gmcpnalanda.com';
+
+// User roles
+const USER_ROLES = {
+    STUDENT: 'student',
+    TEACHER: 'teacher', 
+    MANAGEMENT: 'management',
+    ADMIN: 'admin'
+};
+
+// Utility function to validate email domain
+function validateEmailDomain(email) {
+    return email.endsWith(ALLOWED_DOMAIN);
+}
+
+// Authentication functions
+export const authFunctions = {
+    // Sign in user
+    async signIn(email, password) {
+        try {
+            if (!validateEmailDomain(email)) {
+                throw new Error(`Only ${ALLOWED_DOMAIN} email addresses are allowed`);
+            }
+            
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+            
+            // Get user profile from Firestore
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            
+            if (!userDoc.exists()) {
+                throw new Error('User profile not found. Please contact admin.');
+            }
+            
+            const userData = userDoc.data();
+            
+            if (!userData.active) {
+                throw new Error('Your account has been deactivated. Please contact admin.');
+            }
+            
+            return {
+                uid: user.uid,
+                email: user.email,
+                ...userData
+            };
+        } catch (error) {
+            console.error('Sign in error:', error);
+            throw error;
+        }
+    },
+    
+    // Sign out user
+    async signOut() {
+        try {
+            await signOut(auth);
+        } catch (error) {
+            console.error('Sign out error:', error);
+            throw error;
+        }
+    },
+    
+    // Check authentication state
+    onAuthStateChanged(callback) {
+        return onAuthStateChanged(auth, callback);
+    },
+    
+    // Send password reset email
+    async sendPasswordReset(email) {
+        try {
+            if (!validateEmailDomain(email)) {
+                throw new Error(`Only ${ALLOWED_DOMAIN} email addresses are allowed`);
+            }
+            await sendPasswordResetEmail(auth, email);
+        } catch (error) {
+            console.error('Password reset error:', error);
+            throw error;
+        }
+    },
+    
+    // Get current user
+    getCurrentUser() {
+        return auth.currentUser;
+    }
+};
+
+// Admin functions (for user management)
+export const adminFunctions = {
+    // Create new user (Admin only)
+    async createUser(userData) {
+        try {
+            if (!validateEmailDomain(userData.email)) {
+                throw new Error(`Only ${ALLOWED_DOMAIN} email addresses are allowed`);
+            }
+            
+            // Create user in Firebase Auth
+            const userCredential = await createUserWithEmailAndPassword(auth, userData.email, userData.password);
+            const user = userCredential.user;
+            
+            // Create user profile in Firestore
+            const userProfile = {
+                uid: user.uid,
+                email: userData.email,
+                name: userData.name,
+                role: userData.role,
+                active: true,
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp(),
+                createdBy: auth.currentUser?.uid || 'system'
+            };
+            
+            // Add role-specific data
+            if (userData.role === USER_ROLES.STUDENT) {
+                userProfile.studentData = {
+                    branch: userData.branch,
+                    year: userData.year,
+                    rollNumber: userData.rollNumber,
+                    semester: userData.semester
+                };
+            } else if (userData.role === USER_ROLES.TEACHER) {
+                userProfile.teacherData = {
+                    subjects: userData.subjects || [],
+                    branches: userData.branches || [],
+                    employeeId: userData.employeeId
+                };
+            } else if (userData.role === USER_ROLES.MANAGEMENT) {
+                userProfile.managementData = {
+                    department: userData.department,
+                    permissions: userData.permissions || ['read', 'write', 'delete']
+                };
+            }
+            
+            await setDoc(doc(db, 'users', user.uid), userProfile);
+            
+            return {
+                uid: user.uid,
+                ...userProfile
+            };
+        } catch (error) {
+            console.error('Create user error:', error);
+            throw error;
+        }
+    },
+    
+    // Get all users (Admin only)
+    async getAllUsers() {
+        try {
+            const q = query(collection(db, 'users'), orderBy('createdAt', 'desc'));
+            const querySnapshot = await getDocs(q);
+            const users = [];
+            
+            querySnapshot.forEach((doc) => {
+                users.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+            
+            return users;
+        } catch (error) {
+            console.error('Get users error:', error);
+            throw error;
+        }
+    },
+    
+    // Update user (Admin only)
+    async updateUser(uid, updateData) {
+        try {
+            const userRef = doc(db, 'users', uid);
+            await updateDoc(userRef, {
+                ...updateData,
+                updatedAt: serverTimestamp(),
+                updatedBy: auth.currentUser?.uid || 'system'
+            });
+            return true;
+        } catch (error) {
+            console.error('Update user error:', error);
+            throw error;
+        }
+    },
+    
+    // Delete user (Admin only)
+    async deleteUser(uid) {
+        try {
+            await deleteDoc(doc(db, 'users', uid));
+            return true;
+        } catch (error) {
+            console.error('Delete user error:', error);
+            throw error;
+        }
+    },
+    
+    // Get users by role
+    async getUsersByRole(role) {
+        try {
+            const q = query(
+                collection(db, 'users'), 
+                where('role', '==', role),
+                orderBy('createdAt', 'desc')
+            );
+            const querySnapshot = await getDocs(q);
+            const users = [];
+            
+            querySnapshot.forEach((doc) => {
+                users.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+            
+            return users;
+        } catch (error) {
+            console.error('Get users by role error:', error);
+            throw error;
+        }
+    }
+};
+
+// Database functions
+export const dbFunctions = {
+    // Get user profile
+    async getUserProfile(uid) {
+        try {
+            const userDoc = await getDoc(doc(db, 'users', uid));
+            if (userDoc.exists()) {
+                return userDoc.data();
+            }
+            return null;
+        } catch (error) {
+            console.error('Get user profile error:', error);
+            throw error;
+        }
+    },
+    
+    // Update user profile
+    async updateUserProfile(uid, updateData) {
+        try {
+            const userRef = doc(db, 'users', uid);
+            await updateDoc(userRef, {
+                ...updateData,
+                updatedAt: serverTimestamp()
+            });
+            return true;
+        } catch (error) {
+            console.error('Update profile error:', error);
+            throw error;
+        }
+    }
+};
+
+// Export constants and Firebase instances
+export { 
+    auth, 
+    db, 
+    USER_ROLES, 
+    ALLOWED_DOMAIN,
+    validateEmailDomain 
+};

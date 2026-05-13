@@ -1,0 +1,74 @@
+{
+  "CSE_2025_1_DS": {
+    "id": "CSE_2025_1_DS",
+    "sessionId": "2025-2028",
+    "branchId": "CSE",
+    "semester": 1,
+    "subjectCode": "CS101",
+    "subjectName": "Data Structures",
+    "credits": 4,
+    "status": "active",
+    "createdAt": "2025-07-01T00:00:00.000Z",
+    "createdBy": "admin@gmcpnalanda.com"
+  },
+  "CSE_2025_1_PROG": {
+    "id": "CSE_2025_1_PROG",
+    "sessionId": "2025-2028",
+    "branchId": "CSE",
+    "semester": 1,
+    "subjectCode": "CS102",
+    "subjectName": "Programming Fundamentals",
+    "credits": 4,
+    "status": "active",
+    "createdAt": "2025-07-01T00:00:00.000Z",
+    "createdBy": "admin@gmcpnalanda.com"
+  },
+  "CSE_2025_1_MATH": {
+    "id": "CSE_2025_1_MATH",
+    "sessionId": "2025-2028",
+    "branchId": "CSE",
+    "semester": 1,
+    "subjectCode": "MA101",
+    "subjectName": "Engineering Mathematics I",
+    "credits": 4,
+    "status": "active",
+    "createdAt": "2025-07-01T00:00:00.000Z",
+    "createdBy": "admin@gmcpnalanda.com"
+  },
+  "CSE_2025_2_CS102": {
+    "id": "CSE_2025_2_CS102",
+    "sessionId": "2025-2028",
+    "branchId": "CSE",
+    "semester": 2,
+    "subjectCode": "CS102",
+    "subjectName": "DSA",
+    "credits": 3,
+    "status": "active",
+    "createdAt": "2025-12-26T19:05:34.916Z",
+    "createdBy": "admin@gmcpnalanda.com"
+  },
+  "CE_2025_2_CE201": {
+    "id": "CE_2025_2_CE201",
+    "sessionId": "2025-2028",
+    "branchId": "CE",
+    "semester": 2,
+    "subjectCode": "CE201",
+    "subjectName": "RCC",
+    "credits": 6,
+    "status": "active",
+    "createdAt": "2026-01-07T19:47:06.270Z",
+    "createdBy": "admin@gmcpnalanda.com"
+  },
+  "ME_2023_3_CS101": {
+    "id": "ME_2023_3_CS101",
+    "sessionId": "2023-2026",
+    "branchId": "ME",
+    "semester": 3,
+    "subjectCode": "CS101",
+    "subjectName": "MATHS",
+    "credits": 2,
+    "status": "active",
+    "createdAt": "2026-01-18T17:26:52.851Z",
+    "createdBy": "admin@gmcpnalanda.com"
+  }
+}

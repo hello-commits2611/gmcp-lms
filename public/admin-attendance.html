@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance System - GMCP Admin</title>
+    <link rel="stylesheet" href="css/common.css">
+    <style>
+        body { background: #f8f9fa; font-family: Arial, sans-serif; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 10px; margin-bottom: 30px; }
+        .header h1 { margin: 0 0 10px 0; }
+        .controls { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
+        .date-input { padding: 10px; border: 2px solid #dee2e6; border-radius: 8px; font-size: 14px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-primary:hover { background: #5568d3; }
+        .btn-secondary { background: #6c757d; color: white; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .stat-value { font-size: 32px; font-weight: bold; color: #667eea; margin-bottom: 5px; }
+        .stat-label { color: #6c757d; font-size: 14px; }
+        .attendance-table { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #dee2e6; }
+        th { background: #f8f9fa; font-weight: 600; color: #495057; }
+        .badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .badge-in { background: #d4edda; color: #155724; }
+        .badge-out { background: #fff3cd; color: #856404; }
+        .badge-present { background: #d1ecf1; color: #0c5460; }
+        .badge-completed { background: #d4edda; color: #155724; }
+        .loading { text-align: center; padding: 40px; color: #6c757d; }
+        .spinner { border: 3px solid #f3f3f3; border-top: 3px solid #667eea; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .empty-state { text-align: center; padding: 60px 20px; color: #6c757d; }
+        .empty-state-icon { font-size: 48px; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Biometric Attendance System</h1>
+            <p style="margin: 0; opacity: 0.9;">Real-time attendance tracking and reporting</p>
+        </div>
+
+        <div class="controls">
+            <input type="date" id="selectedDate" class="date-input" />
+            <select id="roleFilter" class="date-input" style="padding: 10px;">
+                <option value="">All Roles</option>
+                <option value="student">Students Only</option>
+                <option value="teacher">Faculty Only</option>
+                <option value="staff">Staff Only</option>
+                <option value="admin">Admin Only</option>
+            </select>
+            <button class="btn btn-primary" onclick="loadAttendance()">🔍 View Attendance</button>
+            <button class="btn btn-secondary" onclick="loadToday()">📅 Today</button>
+            <button class="btn btn-secondary" onclick="exportToCSV()">📥 Export CSV</button>
+        </div>
+
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalUsers">--</div>
+                <div class="stat-label">Total Records</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="presentCount">--</div>
+                <div class="stat-label">Present Today</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="completedCount">--</div>
+                <div class="stat-label">Completed (IN+OUT)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="inProgressCount">--</div>
+                <div class="stat-label">In Progress</div>
+            </div>
+        </div>
+
+        <div class="attendance-table">
+            <h3 style="margin-top: 0;">📋 Attendance Records</h3>
+            <div id="attendanceContent">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 20px;">Loading attendance data...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set today's date by default
+        document.getElementById('selectedDate').valueAsDate = new Date();
+
+        // Load today's attendance on page load
+        loadToday();
+
+        function loadToday() {
+            document.getElementById('selectedDate').valueAsDate = new Date();
+            loadAttendance();
+        }
+
+        async function loadAttendance() {
+            const dateInput = document.getElementById('selectedDate');
+            const roleFilter = document.getElementById('roleFilter');
+            const selectedDate = dateInput.value;
+            const selectedRole = roleFilter.value;
+            
+            if (!selectedDate) {
+                alert('Please select a date');
+                return;
+            }
+
+            const contentDiv = document.getElementById('attendanceContent');
+            contentDiv.innerHTML = '<div class="loading"><div class="spinner"></div><p style="margin-top: 20px;">Loading attendance data...</p></div>';
+
+            try {
+                const url = selectedRole 
+                    ? `/api/admin/attendance/summary/${selectedDate}?role=${selectedRole}`
+                    : `/api/admin/attendance/summary/${selectedDate}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                console.log('📊 API Response:', data);
+                console.log('📋 Summary records:', data.summary);
+
+                if (!data.success) {
+                    throw new Error(data.error || 'Failed to load attendance');
+                }
+
+                // Update stats
+                document.getElementById('totalUsers').textContent = data.totalUsers || 0;
+                document.getElementById('presentCount').textContent = data.presentCount || 0;
+                document.getElementById('completedCount').textContent = data.summary.filter(s => s.status === 'COMPLETED').length || 0;
+                document.getElementById('inProgressCount').textContent = data.summary.filter(s => s.status === 'IN_PROGRESS').length || 0;
+
+                // Display attendance records
+                if (data.summary.length === 0) {
+                    contentDiv.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📭</div>
+                            <h3>No Attendance Records</h3>
+                            <p>No one has punched in for ${selectedDate}</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let tableHTML = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Biometric ID</th>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Student ID</th>
+                                <th>Employee ID</th>
+                                <th>Email</th>
+                                <th>First IN</th>
+                                <th>Last OUT</th>
+                                <th>Total Punches</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                data.summary.forEach(record => {
+                    const firstInTime = record.firstIn ? formatTime(record.firstIn) : '--';
+                    const lastOutTime = record.lastOut ? formatTime(record.lastOut) : '--';
+                    const statusBadge = getStatusBadge(record.status);
+                    const roleBadge = getRoleBadge(record.role);
+                    const studentId = record.studentId || '<span style="color: #adb5bd;">Not Set</span>';
+                    const employeeId = record.employeeId || '<span style="color: #adb5bd;">Not Set</span>';
+
+                    tableHTML += `
+                        <tr>
+                            <td><strong>${record.biometricId || 'N/A'}</strong></td>
+                            <td>${record.userName}</td>
+                            <td>${roleBadge}</td>
+                            <td style="font-weight: 500;">${studentId}</td>
+                            <td style="font-weight: 500;">${employeeId}</td>
+                            <td style="color: #6c757d; font-size: 13px;">${record.userEmail}</td>
+                            <td>${firstInTime}</td>
+                            <td>${lastOutTime}</td>
+                            <td style="text-align: center;">${record.totalPunches}</td>
+                            <td>${statusBadge}</td>
+                        </tr>
+                    `;
+
+                    // Add detailed punches row if user wants to expand
+                    if (record.punches.length > 0) {
+                        tableHTML += `
+                            <tr style="background: #f8f9fa;">
+                                <td colspan="10" style="padding-left: 40px; font-size: 13px; color: #6c757d;">
+                                    <strong>Punch Details:</strong>
+                                    ${record.punches.map(p => `
+                                        <span class="badge ${p.type === 'IN' ? 'badge-in' : 'badge-out'}">
+                                            ${p.type} - ${formatTime(p.timestamp)}
+                                        </span>
+                                    `).join(' ')}
+                                </td>
+                            </tr>
+                        `;
+                    }
+                });
+
+                tableHTML += '</tbody></table>';
+                contentDiv.innerHTML = tableHTML;
+
+            } catch (error) {
+                console.error('Error loading attendance:', error);
+                contentDiv.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⚠️</div>
+                        <h3>Error Loading Data</h3>
+                        <p>${error.message}</p>
+                        <button class="btn btn-primary" onclick="loadAttendance()">🔄 Retry</button>
+                    </div>
+                `;
+            }
+        }
+
+        function formatTime(timestamp) {
+            if (!timestamp) return '--';
+            
+            let date;
+            if (timestamp.toDate) {
+                // Firestore Timestamp object
+                date = timestamp.toDate();
+            } else if (timestamp._seconds) {
+                // Plain object with _seconds (from API)
+                date = new Date(timestamp._seconds * 1000);
+            } else if (typeof timestamp === 'string' || typeof timestamp === 'number') {
+                // String or number timestamp
+                date = new Date(timestamp);
+            } else {
+                return '--';
+            }
+            
+            return date.toLocaleTimeString('en-IN', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true 
+            });
+        }
+
+        function getStatusBadge(status) {
+            const badges = {
+                'COMPLETED': '<span class="badge badge-completed">✅ Completed</span>',
+                'IN_PROGRESS': '<span class="badge badge-present">⏳ In Progress</span>',
+                'ABSENT': '<span class="badge">❌ Absent</span>'
+            };
+            return badges[status] || status;
+        }
+        
+        function getRoleBadge(role) {
+            const badges = {
+                'student': '<span class="badge" style="background: #e3f2fd; color: #1565c0;">🎓 Student</span>',
+                'teacher': '<span class="badge" style="background: #f3e5f5; color: #6a1b9a;">👨‍🏫 Faculty</span>',
+                'staff': '<span class="badge" style="background: #fff3e0; color: #e65100;">💼 Staff</span>',
+                'admin': '<span class="badge" style="background: #ffebee; color: #c62828;">🔑 Admin</span>',
+                'management': '<span class="badge" style="background: #e8f5e9; color: #2e7d32;">📊 Management</span>'
+            };
+            return badges[role] || `<span class="badge">${role || 'Unknown'}</span>`;
+        }
+
+        async function exportToCSV() {
+            const dateInput = document.getElementById('selectedDate');
+            const selectedDate = dateInput.value;
+            
+            if (!selectedDate) {
+                alert('Please select a date');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/admin/attendance/summary/${selectedDate}`);
+                const data = await response.json();
+
+                if (!data.success || data.summary.length === 0) {
+                    alert('No data to export');
+                    return;
+                }
+
+                // Create CSV content
+                let csv = 'Biometric ID,Name,Role,Student ID,Employee ID,Email,First IN,Last OUT,Total Punches,Status\n';
+                
+                data.summary.forEach(record => {
+                    const firstIn = record.firstIn ? formatTime(record.firstIn) : '';
+                    const lastOut = record.lastOut ? formatTime(record.lastOut) : '';
+                    const studentId = record.studentId || 'Not Set';
+                    const employeeId = record.employeeId || 'Not Set';
+                    
+                    csv += `"${record.biometricId || 'N/A'}","${record.userName}","${record.role || 'Unknown'}","${studentId}","${employeeId}","${record.userEmail}","${firstIn}","${lastOut}",${record.totalPunches},"${record.status}"\n`;
+                });
+
+                // Download CSV
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `attendance_${selectedDate}.csv`;
+                a.click();
+                window.URL.revokeObjectURL(url);
+
+            } catch (error) {
+                console.error('Export error:', error);
+                alert('Failed to export data: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

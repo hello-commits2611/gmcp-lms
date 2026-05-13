@@ -1,0 +1,20 @@
+{
+  "watch": [
+    "server.js",
+    "routes",
+    "middleware",
+    "utils",
+    "config"
+  ],
+  "ignore": [
+    "node_modules",
+    "uploads",
+    ".git",
+    "*.json~",
+    "data/*.json",
+    "../lms-system/public"
+  ],
+  "ext": "js",
+  "delay": 1000,
+  "verbose": false
+}

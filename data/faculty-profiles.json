@@ -1,0 +1,22 @@
+{
+  "mukesh@gmcpnalanda.com": {
+    "email": "mukesh@gmcpnalanda.com",
+    "fullName": "Mukesh Kumar",
+    "mobileNumber": "9431284775",
+    "dateOfBirth": "2007-01-08",
+    "gender": "male",
+    "employeeId": "MG001",
+    "designation": "HOD",
+    "department": "Mechanical",
+    "subjectSpecialization": "DATA SCIENCE",
+    "qualification": "PHD",
+    "totalExperience": "4",
+    "dateOfJoining": "2026-01-04",
+    "employmentType": "Permanent",
+    "address": "FRAZER ROAD PATNA",
+    "profileCompleted": true,
+    "completedAt": "2026-01-07T18:24:36.528Z",
+    "lastUpdatedBy": "mukesh@gmcpnalanda.com",
+    "lastUpdatedAt": "2026-01-07T18:24:36.528Z"
+  }
+}
