@@ -655,6 +655,64 @@
             background: #9e9e9e;
         }
 
+        /* NBA/OBE Dashboard iframe section */
+        .nba-section-wrapper {
+            width: 100%;
+        }
+
+        .nba-section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .nba-section-header h2 {
+            margin-bottom: 0;
+        }
+
+        .nba-badge {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        .nba-iframe-container {
+            width: 100%;
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .nba-iframe {
+            width: 100%;
+            height: calc(100vh - 180px);
+            min-height: 600px;
+            border: none;
+            display: block;
+        }
+
+        .nba-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            color: #64748b;
+            gap: 1rem;
+        }
+
+        .nba-loading .spinner {
+            border-color: #e2e8f0;
+            border-top-color: #6366f1;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .form-grid,
@@ -730,6 +788,7 @@
             <div class="nav-item active" onclick="showSection('profile')">👤 My Profile</div>
             <div class="nav-item" id="attendanceNav" onclick="showSection('attendance')">📋 Mark Attendance</div>
             <div class="nav-item" id="reportsNav" onclick="showSection('reports')">📊 Attendance Reports</div>
+            <div class="nav-item disabled" id="nbaNav" onclick="showSection('nba')">🎓 NBA / OBE</div>
         </div>
     </nav>
 
@@ -988,6 +1047,30 @@
                     <button class="btn-modern btn-modern-secondary" onclick="cancelAttendance()">
                         ❌ CANCEL
                     </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- NBA / OBE DASHBOARD SECTION -->
+        <section id="nba" class="page-section">
+            <div class="nba-section-wrapper">
+                <div class="nba-section-header">
+                    <h2>NBA / OBE Attainment Dashboard</h2>
+                    <span class="nba-badge">NBA/AICTE</span>
+                </div>
+                <div class="nba-iframe-container">
+                    <div id="nbaLoading" class="nba-loading">
+                        <div class="spinner"></div>
+                        <p>Loading OBE Dashboard...</p>
+                    </div>
+                    <iframe
+                        id="nbaDashboardFrame"
+                        class="nba-iframe"
+                        src=""
+                        title="NBA/OBE Attainment Calculation Dashboard"
+                        style="display: none;"
+                        onload="document.getElementById('nbaLoading').style.display='none'; this.style.display='block';"
+                    ></iframe>
                 </div>
             </div>
         </section>
@@ -1332,6 +1415,10 @@
         function enableDashboard() {
             const dashboardNav = document.getElementById('dashboardNav');
             dashboardNav.classList.remove('disabled');
+
+            // Also enable NBA/OBE nav
+            const nbaNav = document.getElementById('nbaNav');
+            if (nbaNav) nbaNav.classList.remove('disabled');
         }
 
         // Show section
@@ -1725,6 +1812,20 @@
             `;
         }
         
+        // Load NBA Dashboard (lazy: only sets src on first visit)
+        function loadNBADashboard() {
+            const frame = document.getElementById('nbaDashboardFrame');
+            if (!frame) return;
+            // Only set src once — avoid reloading on every click
+            if (!frame.getAttribute('data-loaded')) {
+                const name = (facultyProfile && facultyProfile.fullName)
+                    ? encodeURIComponent(facultyProfile.fullName)
+                    : (currentUser && currentUser.name ? encodeURIComponent(currentUser.name) : '');
+                frame.src = '/nba-dashboard.html?faculty=' + name + '&embedded=true';
+                frame.setAttribute('data-loaded', 'true');
+            }
+        }
+
         // Initialize attendance on section change
         const originalShowSection = showSection;
         showSection = function(sectionId) {
@@ -1733,6 +1834,8 @@
                 loadAttendanceConfiguration();
             } else if (sectionId === 'reports') {
                 loadReportsConfiguration();
+            } else if (sectionId === 'nba') {
+                loadNBADashboard();
             }
         };
         
